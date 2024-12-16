@@ -1,37 +1,21 @@
-from typing import Dict, List, Tuple, Any
+from typing import List
+from .types import ChatMessage, AgentType, LLMResponse
 
+    
 class AgentInterface():
     def __init__(
             self,
             system_message: str,
+            agent_type: AgentType,
     ) -> None:
-        self.chat_history = []
         self.system_message = {
             "role": "system",
             "content": system_message,
         }
-        self.chat_history.append(self.system_message)
+        self.agent_type = agent_type
 
     def process(
         self,
-        document: Any,
-        workflow_element: Any,
-        user_message: str,
-        context: Any = None,
-    ) -> Tuple[Any, str, bool]:
-        """
-        Process the current workflow element with given inputs.
-
-        Args:
-            document: The document being processed
-            workflow_element: The current workflow element configuration
-            user_message: The user message
-            context: Additional contextual information
-
-        Returns:
-            Tuple containing:
-            - Updated workflow element
-            - Response message
-            - Boolean indicating whether we are done with the workflow
-        """
+        chat_history: List[ChatMessage],
+    ) -> LLMResponse:
         pass

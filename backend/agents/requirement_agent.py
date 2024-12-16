@@ -1,7 +1,7 @@
 from .agent_interface import AgentInterface
 from .llm_wrapper import LLMWrapper
-from typing import Any, Tuple
-import json
+from typing import List
+from .types import ChatMessage, LLMMessage, AgentType, LLMResponse
 
 class RequirementAgent(AgentInterface):
     def __init__(self):
@@ -33,7 +33,7 @@ class RequirementAgent(AgentInterface):
                     'Detailed requirement description for requirement 2',
                 ],
                 'communication': 'Detailed explanation of changes made or reasoning or follow-up questions for clarification',
-                'readyForNextWorkflow': boolean
+                'ready_for_next_workflow': boolean
             }
 
             "example_response_1": {
@@ -46,40 +46,54 @@ class RequirementAgent(AgentInterface):
             }
         """
         
-        super().__init__(system_message)
+        super().__init__(system_message, AgentType.Requirement)
         self.llm = LLMWrapper()
 
     def process(
         self,
-        document: Any,
-        user_message: str,
-        context: Any = None,
-    ) -> Tuple[Any, str, bool]:
-        # Generate content string combining document and user message
-        content = {
-            "document": document,
-            "user_message": user_message,
-        }
-        
-        # Convert to JSON string
-        content_str = json.dumps(content)
+        chat_history: List[ChatMessage],
+    ) -> LLMResponse:
 
-        # Add user message to chat history
-        self.chat_history.append({
-            "role": "user",
-            "content": content_str,
-        })
-        
+        llm_messages = self.generate_llm_history(chat_history)
+
+        # Define required fields in LLM response
+        response_format = ["requirements", "communication", "ready_for_next_workflow"]
+
         # Get response from LLM
-        response = self.llm.get_completion(self.chat_history)
-        
-        # Add assistant response to chat history
-        self.chat_history.append({
-            "role": "assistant",
-            "content": response,
-        })
-        
-        # Parse the response into a JSON object
-        response_json = json.loads(response)
+        return self.llm.get_response(llm_messages, response_format)
+    
+    def generate_llm_history(
+            self,
+            chat_history: List[ChatMessage]
+        ) -> List[LLMMessage]:
 
-        return response_json["requirements"], response_json["communication"], response_json["readyForNextWorkflow"]
+        llm_messages: List[LLMMessage] = []
+        
+        # Add system message
+        llm_messages.append(self.system_message)
+        
+        # Convert chat history to LLM messages
+        for chat in chat_history:
+            is_requirement_agent = chat["agent_id"] == str(AgentType.Requirement.value)
+            is_user_agent = chat["agent_id"] == str(AgentType.User.value)
+            
+            message: LLMMessage = {
+                "role": "assistant" if is_requirement_agent else "user",
+                "content": self.get_message_content(chat, is_user_agent)
+            }
+            llm_messages.append(message)
+            
+        return llm_messages
+    
+    def get_message_content(self, chat: ChatMessage, is_user_agent: bool) -> str:
+        if is_user_agent:
+            return f"""{chat['message']}
+                        Update the requirements in the doc given below as desired:
+                        Document:
+                        {self.get_relevant_document(chat['document'])}
+                    """
+        else:
+            return chat["response"]
+    
+    def get_relevant_document(self, document: str) -> str:
+        return document
