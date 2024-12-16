@@ -8,8 +8,9 @@ class AgentType(Enum):
     
 class ChatMessage(TypedDict):
     agent_id: AgentType
-    message: str  
+    message: str
     document: any # complete current state of document
+    response: str # response from the LLM
 
 class LLMMessage(TypedDict):
     role: str  # can be "system", "user", or "assistant"
