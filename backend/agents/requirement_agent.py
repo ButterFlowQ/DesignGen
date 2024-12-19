@@ -1,7 +1,9 @@
+from typing import List
+
 from .agent_interface import AgentInterface
 from .llm_wrapper import LLMWrapper
-from typing import List
-from .types import ChatMessage, LLMMessage, AgentType, LLMResponse
+from .types import AgentType, ChatMessage, LLMMessage, LLMResponse
+
 
 class RequirementAgent(AgentInterface):
     def __init__(self):
@@ -45,8 +47,8 @@ class RequirementAgent(AgentInterface):
                 "readyForNextWorkflow": false
             }
         """
-        
-        super().__init__(system_message, AgentType.Requirement)
+
+        super().__init__(system_message, AgentType.REQUIREMENT)
         self.llm = LLMWrapper()
 
     def process(
@@ -61,30 +63,27 @@ class RequirementAgent(AgentInterface):
 
         # Get response from LLM
         return self.llm.get_response(llm_messages, response_format)
-    
-    def generate_llm_history(
-            self,
-            chat_history: List[ChatMessage]
-        ) -> List[LLMMessage]:
+
+    def generate_llm_history(self, chat_history: List[ChatMessage]) -> List[LLMMessage]:
 
         llm_messages: List[LLMMessage] = []
-        
+
         # Add system message
         llm_messages.append(self.system_message)
-        
+
         # Convert chat history to LLM messages
         for chat in chat_history:
-            is_requirement_agent = chat["agent_id"] == str(AgentType.Requirement.value)
-            is_user_agent = chat["agent_id"] == str(AgentType.User.value)
-            
+            is_requirement_agent = chat["agent_id"] == str(AgentType.REQUIREMENT.value)
+            is_user_agent = chat["agent_id"] == str(AgentType.USER.value)
+
             message: LLMMessage = {
                 "role": "assistant" if is_requirement_agent else "user",
-                "content": self.get_message_content(chat, is_user_agent)
+                "content": self.get_message_content(chat, is_user_agent),
             }
             llm_messages.append(message)
-            
+
         return llm_messages
-    
+
     def get_message_content(self, chat: ChatMessage, is_user_agent: bool) -> str:
         if is_user_agent:
             return f"""{chat['message']}
@@ -94,6 +93,6 @@ class RequirementAgent(AgentInterface):
                     """
         else:
             return chat["response"]
-    
+
     def get_relevant_document(self, document: str) -> str:
         return document

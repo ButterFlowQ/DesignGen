@@ -1,0 +1,4 @@
+{
+  "pylint.args": ["--disable=C0116,C0114,C0115"],
+  "pylint.enabled": true
+}
