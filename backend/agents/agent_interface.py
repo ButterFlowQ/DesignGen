@@ -1,12 +1,12 @@
 from typing import List
 from .types import ChatMessage, AgentType, LLMResponse
 
-    
-class AgentInterface():
+
+class AgentInterface:
     def __init__(
-            self,
-            system_message: str,
-            agent_type: AgentType,
+        self,
+        system_message: str,
+        agent_type: AgentType,
     ) -> None:
         self.system_message = {
             "role": "system",
