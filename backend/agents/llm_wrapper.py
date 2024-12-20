@@ -1,5 +1,4 @@
 import json
-
 import aisuite as ai
 
 from .types import LLMResponse
@@ -10,7 +9,7 @@ class LLMWrapper:
         self.client = ai.Client()
         self.model = "anthropic:claude-3-5-sonnet-20241022"
 
-    def get_response(self, messages, response_format):
+    def get_response(self, messages: list[dict], response_format: list[str]) -> LLMResponse:
         max_retries = 3
         current_try = 0
         last_error = None
@@ -35,17 +34,20 @@ class LLMWrapper:
                     raise ValueError("Missing required fields in response")
 
                 return LLMResponse(
-                    move_to_next_workflow=parsed_response["ready_for_next_workflow"],
-                    response_message=parsed_response["communication"],
-                    updated_workflow_doc=parsed_response["current_workflow_doc"],
+                    updated_workflow_doc=parsed_response[response_format[0]],
+                    response_message=parsed_response[response_format[1]],
+                    move_to_next_workflow=parsed_response[response_format[2]],
                 )
 
             except (ValueError, AttributeError, TypeError, json.JSONDecodeError) as e:
                 current_try += 1
                 last_error = e
+            except Exception as e:
+                raise e
 
-        raise Exception(
-            f"Failed to get valid response after {max_retries} attempts. Last error: {str(last_error)}"
+        raise ValueError(
+            f"Failed to get valid response after {max_retries} attempts. "
+            f"Last error: {str(last_error)}"
         )
 
     def get_completion(self, messages):

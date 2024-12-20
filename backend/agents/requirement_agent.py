@@ -1,9 +1,9 @@
 from typing import List
 
-from .agent_interface import AgentInterface
-from .llm_wrapper import LLMWrapper
-from .types import AgentType, ChatMessage, LLMMessage, LLMResponse
+from workflowManager.models import ChatMessage
 
+from .agent_interface import AgentInterface
+from .types import AgentType, LLMMessage, LLMResponse
 
 class RequirementAgent(AgentInterface):
     def __init__(self):
@@ -48,9 +48,9 @@ class RequirementAgent(AgentInterface):
             }
         """
 
-        super().__init__(system_message, AgentType.REQUIREMENT)
-        self.llm = LLMWrapper()
-
+        response_format = ["requirements", "communication", "ready_for_next_workflow"]
+        super().__init__(AgentType.REQUIREMENT, system_message, response_format)
+        
     def process(
         self,
         chat_history: List[ChatMessage],
@@ -58,11 +58,8 @@ class RequirementAgent(AgentInterface):
 
         llm_messages = self.generate_llm_history(chat_history)
 
-        # Define required fields in LLM response
-        response_format = ["requirements", "communication", "ready_for_next_workflow"]
-
         # Get response from LLM
-        return self.llm.get_response(llm_messages, response_format)
+        return self.llm.get_response(llm_messages, self.response_format)
 
     def generate_llm_history(self, chat_history: List[ChatMessage]) -> List[LLMMessage]:
 
