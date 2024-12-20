@@ -96,7 +96,7 @@ class Document(models.Model):
         )
 
 
-class Chat(models.Model):
+class ChatMessage(models.Model):
     # Choices for agent type
     AGENT_TYPE_CHOICES = [
         ("agent", "Agent"),
