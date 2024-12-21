@@ -27,6 +27,12 @@ pip install -r requirements.txt
 
 ## Running the Server
 
+Run the following command to set anthropic api key:
+
+```sh
+export ANTHROPIC_API_KEY=your_api_key
+```
+
 Start the development server with the following command:
 
 ```sh
