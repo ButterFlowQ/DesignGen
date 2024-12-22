@@ -27,7 +27,8 @@ def send_chat_message(request):
         return JsonResponse({"error": "Invalid request method"}, status=400)
     data = json.loads(request.body)
     chat_message = ChatMessage.objects.create(message=data["message"])
-    return JsonResponse({"id": chat_message.id, "message": chat_message.message})
+    process_chat_message(chat_message)
+    return JsonResponse(fetch_chat_messages(chat_message.document))
 
 
 def fetch_chat_messages(document):
@@ -42,6 +43,11 @@ def process_chat_message(chat_message):
     llmresponse = AgentFactory.create_agent(
         chat_message.current_workflow_element.agent
     ).process(chat_messages)
+    new_chat_message = handle_llm_response(
+        llmresponse, document, chat_message.current_workflow_element
+    )
+    if llmresponse.move_to_next_workflow:
+        process_chat_message(new_chat_message)
 
 
 def handle_llm_response(
