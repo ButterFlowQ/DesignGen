@@ -15,9 +15,16 @@ def create_document(request):
     if request.method != "POST":
         return JsonResponse({"error": "Invalid request method"}, status=400)
     data = json.loads(request.body)
-    document = Document.objects.create(workflow=data["workflow"])
+    document = Document.objects.create(
+        workflow=Workflow.objects.filter(id=data["workflow"]).first(),
+        owner=request.user,
+        latest_version=data["latest_version"],
+    )
+    versioned_document = VersionedDocument.objects.create(
+        document=document, title=data["title"], version=0
+    )
     return JsonResponse(
-        {"id": document.id, "title": document.title, "content": document.content}
+        {"id": document.id, "versioned_document_id": versioned_document.id}
     )
 
 

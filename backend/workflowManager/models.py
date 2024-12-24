@@ -1,28 +1,10 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
-
-
-class User(AbstractUser):
-    # Additional fields can be added here if needed
-    groups = models.ManyToManyField(
-        "auth.Group",
-        related_name="workflowmanager_user_groups",
-        blank=True,
-        help_text="The groups this user belongs to.",
-        verbose_name="groups",
-    )
-    user_permissions = models.ManyToManyField(
-        "auth.Permission",
-        related_name="workflowmanager_user_permissions",
-        blank=True,
-        help_text="Specific permissions for this user.",
-        verbose_name="user permissions",
-    )
+from django.contrib.auth.models import User
 
 
 class Agent(models.Model):
     # Primary key for the Agent model
-    id = models.AutoField(primary_key=True)
+    id = models.CharField(max_length=255, primary_key=True)
     # Name of the AI agent
     name = models.CharField(max_length=255)
     # Description of the AI agent
@@ -77,7 +59,7 @@ class VersionedDocument(models.Model):
     # Version of the document
     version = models.IntegerField()
     # Mapping of workflow element ID to corresponding document content
-    workflow_elements = models.JSONField()
+    workflow_elements = models.JSONField(null=True, blank=True)
     # Foreign key to the Document model
     document = models.ForeignKey(Document, on_delete=models.CASCADE)
 
