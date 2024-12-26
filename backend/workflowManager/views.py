@@ -29,6 +29,28 @@ def create_document(request):
 
 
 @csrf_exempt
+def get_document(request, document_id):
+    if request.method != "GET":
+        return JsonResponse({"error": "Invalid request method"}, status=400)
+    document = Document.objects.filter(id=document_id).first()
+    if not document:
+        return JsonResponse({"error": "Document not found"}, status=404)
+    versioned_document = VersionedDocument.objects.filter(document=document).latest(
+        "version"
+    )
+    response = {
+        "id": document.id,
+        "workflow": document.workflow.id,
+        "owner": document.owner.id,
+        "latest_version": document.latest_version,
+        "title": versioned_document.title,
+        "version": versioned_document.version,
+        "workflow_elements": versioned_document.workflow_elements,
+    }
+    return JsonResponse(response)
+
+
+@csrf_exempt
 def send_chat_message(request):
     if request.method != "POST":
         return JsonResponse({"error": "Invalid request method"}, status=400)
@@ -36,6 +58,9 @@ def send_chat_message(request):
     chat_message = ChatMessage.objects.create(
         message=data["message"],
         document=Document.objects.filter(id=data["document_id"]).first(),
+        in_reply_to=ChatMessage.objects.filter(id=data["in_reply_to"]).first(),
+        from_agent_type=AgentType.USER,
+        from_id=request.user.id,
     )
     process_chat_message(chat_message, request)
     return JsonResponse(

@@ -84,7 +84,9 @@ class ChatMessage(models.Model):
     # ID of the agent sending the message
     from_id = models.CharField(max_length=255, null=True, blank=True)
     # ID of the message this message is replying to (optional)
-    in_reply_to = models.CharField(max_length=255, null=True, blank=True)
+    in_reply_to = models.ForeignKey(
+        "self", on_delete=models.CASCADE, null=True, blank=True
+    )
     # Timestamp when the message was created
     creation_time = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     # Content of the message
