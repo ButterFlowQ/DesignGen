@@ -67,35 +67,43 @@ class VersionedDocument(models.Model):
 class ChatMessage(models.Model):
     # Choices for agent type
     AGENT_TYPE_CHOICES = [
-        ("agent", "Agent"),
-        ("user", "User"),
+        ("agent", "REQUIREMENT"),
+        ("user", "USER"),
     ]
 
     # Primary key for the Chat model
     id = models.AutoField(primary_key=True)
     # Document ID associated with the chat
-    document = models.ForeignKey(Document, on_delete=models.CASCADE)
+    document = models.ForeignKey(
+        Document, on_delete=models.CASCADE, null=True, blank=True
+    )
     # Type of the agent sending the message (agent or user)
-    from_agent_type = models.CharField(max_length=5, choices=AGENT_TYPE_CHOICES)
+    from_agent_type = models.CharField(
+        max_length=5, choices=AGENT_TYPE_CHOICES, null=True, blank=True
+    )
     # ID of the agent sending the message
-    from_id = models.CharField(max_length=255)
+    from_id = models.CharField(max_length=255, null=True, blank=True)
     # ID of the message this message is replying to (optional)
     in_reply_to = models.CharField(max_length=255, null=True, blank=True)
     # Timestamp when the message was created
-    creation_time = models.DateTimeField(auto_now_add=True)
+    creation_time = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     # Content of the message
-    message = models.TextField()
+    message = models.TextField(null=True, blank=True)
     # Foreign key to the VersionedDocument model
-    current_document = models.ForeignKey(VersionedDocument, on_delete=models.CASCADE)
+    current_document = models.ForeignKey(
+        VersionedDocument, on_delete=models.CASCADE, null=True, blank=True
+    )
     # Type of the agent receiving the message (agent or user)
-    to_agent_type = models.CharField(max_length=5, choices=AGENT_TYPE_CHOICES)
+    to_agent_type = models.CharField(
+        max_length=5, choices=AGENT_TYPE_CHOICES, null=True, blank=True
+    )
     # ID of the agent receiving the message
-    to_id = models.CharField(max_length=255)
+    to_id = models.CharField(max_length=255, null=True, blank=True)
     # Start position in the document
-    start_position = models.IntegerField()
+    start_position = models.IntegerField(null=True, blank=True)
     # End position in the document
-    end_position = models.IntegerField()
+    end_position = models.IntegerField(null=True, blank=True)
     # Current workflow element ID
     current_workflow_element = models.ForeignKey(
-        WorkflowElement, on_delete=models.CASCADE
+        WorkflowElement, on_delete=models.CASCADE, null=True, blank=True
     )

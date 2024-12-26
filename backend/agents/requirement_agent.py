@@ -5,6 +5,7 @@ from workflowManager.models import ChatMessage
 from .agent_interface import AgentInterface
 from .types import AgentType, LLMMessage, LLMResponse
 
+
 class RequirementAgent(AgentInterface):
     def __init__(self):
         system_message = """
@@ -50,7 +51,7 @@ class RequirementAgent(AgentInterface):
 
         response_format = ["requirements", "communication", "ready_for_next_workflow"]
         super().__init__(AgentType.REQUIREMENT, system_message, response_format)
-        
+
     def process(
         self,
         chat_history: List[ChatMessage],
@@ -70,8 +71,8 @@ class RequirementAgent(AgentInterface):
 
         # Convert chat history to LLM messages
         for chat in chat_history:
-            is_requirement_agent = chat["agent_id"] == str(AgentType.REQUIREMENT.value)
-            is_user_agent = chat["agent_id"] == str(AgentType.USER.value)
+            is_requirement_agent = chat.from_agent_type == str(AgentType.REQUIREMENT)
+            is_user_agent = chat.from_agent_type == str(AgentType.USER.value)
 
             message: LLMMessage = {
                 "role": "assistant" if is_requirement_agent else "user",
@@ -83,13 +84,13 @@ class RequirementAgent(AgentInterface):
 
     def get_message_content(self, chat: ChatMessage, is_user_agent: bool) -> str:
         if is_user_agent:
-            return f"""{chat['message']}
+            return f"""{chat.message}
                         Update the requirements in the doc given below as desired:
                         Document:
                         {self.get_relevant_document(chat['document'])}
                     """
         else:
-            return chat["response"]
+            return chat.message
 
     def get_relevant_document(self, document: str) -> str:
         return document

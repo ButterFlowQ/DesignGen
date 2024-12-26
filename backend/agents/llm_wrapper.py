@@ -2,6 +2,7 @@ import json
 import aisuite as ai
 
 from .types import LLMResponse
+import traceback
 
 
 class LLMWrapper:
@@ -9,7 +10,9 @@ class LLMWrapper:
         self.client = ai.Client()
         self.model = "anthropic:claude-3-5-sonnet-20241022"
 
-    def get_response(self, messages: list[dict], response_format: list[str]) -> LLMResponse:
+    def get_response(
+        self, messages: list[dict], response_format: list[str]
+    ) -> LLMResponse:
         max_retries = 3
         current_try = 0
         last_error = None
@@ -42,12 +45,14 @@ class LLMWrapper:
             except (ValueError, AttributeError, TypeError, json.JSONDecodeError) as e:
                 current_try += 1
                 last_error = e
+                error_trace = traceback.format_exc()
             except Exception as e:
                 raise e
 
         raise ValueError(
             f"Failed to get valid response after {max_retries} attempts. "
-            f"Last error: {str(last_error)}"
+            f"Last error: {str(last_error)}\n"
+            f"Stack trace:\n{error_trace}"
         )
 
     def get_completion(self, messages):
