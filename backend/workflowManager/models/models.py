@@ -14,7 +14,7 @@ class Agent(models.Model):
     # By default, Django will create 'id' as an AutoField primary key if you omit a custom one.
 
     type = models.CharField(max_length=255)
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.type
@@ -32,7 +32,7 @@ class Workflow(models.Model):
     """
 
     name = models.CharField(max_length=255)
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -56,8 +56,8 @@ class WorkflowElement(models.Model):
     position = models.IntegerField()
     agent = models.ForeignKey(Agent, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
-    description = models.TextField()
-    relevancy_checking_prompt = models.TextField()
+    description = models.TextField(null=True, blank=True)
+    relevancy_checking_prompt = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.name} (Position {self.position})"

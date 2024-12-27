@@ -1,18 +1,44 @@
-from typing import TypedDict
-from enum import Enum
+from enum import Enum, auto
+from typing import Any, TypedDict
 
 
 class AgentType(Enum):
-    USER = 1
-    REQUIREMENT = 2
-    DATABASE = 3
+    """
+    An enumeration representing various agent types in the system.
+    """
+
+    USER = auto()
+    REQUIREMENT = auto()
+    DATABASE = auto()
+
 
 class LLMMessage(TypedDict):
-    role: str  # can be "system", "user", or "assistant"
+    """
+    A message passed to or from an LLM, consisting of a role and its content.
+
+    Attributes:
+        role: Indicates the message role ("system", "user", or "assistant").
+        content: The text content of the message.
+    """
+
+    role: str
     content: str
 
 
 class LLMResponse(TypedDict):
-    updated_workflow_doc: any  # the updated workflow document state
-    response_message: str  # the response message from the LLM
-    move_to_next_workflow: bool  # indicates whether to proceed to next workflow step
+    """
+    A structured response from the LLM, containing:
+      1) The updated workflow document state.
+      2) A response message (often returned to the user).
+      3) A flag indicating whether to proceed to the next workflow step.
+
+    Attributes:
+        updated_workflow_doc: The updated document or workflow state.
+            Use Any if the structure can vary, or a more specific type if known.
+        response_message: The LLM's response message or summary.
+        move_to_next_workflow: Whether the workflow should advance to the next step.
+    """
+
+    updated_workflow_doc: Any
+    response_message: str
+    move_to_next_workflow: bool

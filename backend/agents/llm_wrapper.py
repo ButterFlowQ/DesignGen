@@ -1,61 +1,89 @@
 import json
-import aisuite as ai
-
-from .types import LLMResponse
 import traceback
+from typing import List, Dict
+
+import aisuite as ai
+from .types import LLMResponse
 
 
 class LLMWrapper:
-    def __init__(self):
+    """
+    A wrapper around an AI client for processing messages and retrieving structured responses.
+    """
+
+    def __init__(self) -> None:
+        """
+        Initializes the LLMWrapper with the default AI client and model.
+        """
         self.client = ai.Client()
         self.model = "anthropic:claude-3-5-sonnet-20241022"
 
     def get_response(
-        self, messages: list[dict], response_format: list[str]
+        self, messages: List[Dict[str, str]], expected_fields: List[str]
     ) -> LLMResponse:
-        max_retries = 3
-        current_try = 0
-        last_error = None
+        """
+        Attempts to retrieve a valid structured response from the AI model.
 
-        while current_try < max_retries:
+        :param messages: A list of message dictionaries with 'role' and 'content' fields.
+        :param expected_fields: A list of strings specifying the required JSON keys in the
+            model's response. The list order corresponds to how they're assigned in LLMResponse.
+        :return: An LLMResponse object containing the updated workflow doc, a response message,
+            and a boolean indicating if the workflow should move to the next step.
+        :raises ValueError: If a valid response is not obtained within the retry limit or if any
+            required fields are missing from the model response.
+        """
+        max_retries = 3
+        attempt_count = 0
+        last_exception = None
+        error_trace = ""
+
+        while attempt_count < max_retries:
             try:
-                if current_try == 0:
-                    response = self.get_completion(messages)
+                if attempt_count == 0:
+                    raw_response = self._get_completion(messages)
                 else:
-                    # Add error message and retry
+                    # Append an error message hinting at the missing format
                     error_message = {
                         "role": "user",
-                        "content": f"The previous response was not in the correct format. Please provide response in the exact JSON format specified in the system message. Error: {str(last_error)}",
+                        "content": (
+                            "The previous response was not in the correct format. Please provide "
+                            "the response in the exact JSON format specified in the system "
+                            f"message. Error: {last_exception}"
+                        ),
                     }
                     messages.append(error_message)
-                    response = self.get_completion(messages)
+                    raw_response = self._get_completion(messages)
 
-                parsed_response = json.loads(response)
-
-                # Validate required fields
-                if not all(key in parsed_response for key in response_format):
-                    raise ValueError("Missing required fields in response")
+                parsed_response = json.loads(raw_response)
+                if not all(key in parsed_response for key in expected_fields):
+                    raise ValueError("Missing required fields in the model response.")
 
                 return LLMResponse(
-                    updated_workflow_doc=parsed_response[response_format[0]],
-                    response_message=parsed_response[response_format[1]],
-                    move_to_next_workflow=parsed_response[response_format[2]],
+                    updated_workflow_doc=parsed_response[expected_fields[0]],
+                    response_message=parsed_response[expected_fields[1]],
+                    move_to_next_workflow=parsed_response[expected_fields[2]],
                 )
-
-            except (ValueError, AttributeError, TypeError, json.JSONDecodeError) as e:
-                current_try += 1
-                last_error = e
+            except (ValueError, AttributeError, TypeError, json.JSONDecodeError) as exc:
+                attempt_count += 1
+                last_exception = exc
                 error_trace = traceback.format_exc()
-            except Exception as e:
-                raise e
+            except Exception as exc:
+                # For unexpected exceptions, raise them directly
+                raise exc
 
         raise ValueError(
-            f"Failed to get valid response after {max_retries} attempts. "
-            f"Last error: {str(last_error)}\n"
-            f"Stack trace:\n{error_trace}"
+            f"Failed to get a valid response after {max_retries} attempts.\n"
+            f"Last error: {last_exception}\nStack trace:\n{error_trace}"
         )
 
-    def get_completion(self, messages):
+    def _get_completion(self, messages: List[Dict[str, str]]) -> str:
+        """
+        Sends a chat completion request to the AI client.
+
+        :param messages: A list of dicts containing the conversation history with 'role' and
+            'content' keys.
+        :return: The AI model's response content as a string.
+        """
         response = self.client.chat.completions.create(
             model=self.model, messages=messages, temperature=0.25
         )

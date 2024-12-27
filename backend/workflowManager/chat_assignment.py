@@ -13,7 +13,7 @@ def assign_workflow_element(chat_message):
         document, chat_message, chat_messages, workflow_elements
     )
     chat_message.to_agent_type = AgentType[
-        chat_message.current_workflow_element.agent.id
+        chat_message.current_workflow_element.agent.type
     ]
     chat_message.to_id = chat_message.current_workflow_element.agent.id
 
