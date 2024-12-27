@@ -1,6 +1,6 @@
 from typing import List
 
-from workflowManager.models import ChatMessage
+from workflowManager.models.models import ChatMessage
 
 from .types import AgentType, LLMResponse
 from .llm_wrapper import LLMWrapper
