@@ -13,10 +13,7 @@ class AgentInterface:
         system_message: str,
         response_format: list[str],
     ) -> None:
-        self.system_message = {
-            "role": "system",
-            "content": system_message,
-        }
+        self.system_message = system_message
         self.agent_type = agent_type
         self.response_format = response_format
         self.llm = LLMWrapper()

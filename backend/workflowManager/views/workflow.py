@@ -57,6 +57,11 @@ def send_chat_message(request):
     return _serialize_chat_messages(_fetch_chat_messages(chat_message.document))
 
 
+@csrf_exempt
+def get_chat_message(request):
+    return "hi"
+
+
 ####################################################################################################
 ########################################## Private Methods #########################################
 ####################################################################################################
@@ -68,7 +73,7 @@ def _validate_chat_message_request(data):
     Returns a JsonResponse if any required field is missing or invalid; otherwise None.
     """
     logger.debug("Validating chat message request data.")
-    required_fields = ["message", "document_id", "in_reply_to"]
+    required_fields = ["message", "document_id"]
     for field in required_fields:
         if field not in data:
             logger.warning("Missing required field: %s", field)
@@ -87,7 +92,10 @@ def _build_send_chat_message_response(data, request):
     """
     logger.debug("Building chat message from request data.")
     document = get_object_or_404(Document, pk=data["document_id"])
-    in_reply_to = get_object_or_404(ChatMessage, pk=data["in_reply_to"])
+    if "in_reply_to" in data:
+        in_reply_to = get_object_or_404(ChatMessage, pk=data["in_reply_to"])
+    else:
+        in_reply_to = None
 
     chat_message = ChatMessage.objects.create(
         message=data["message"],
@@ -113,7 +121,7 @@ def _fetch_chat_messages(document):
     Private method that returns all ChatMessage objects for a given Document.
     """
     logger.debug("Fetching chat messages for Document ID: %s", document.id)
-    return ChatMessage.objects.filter(document=document)
+    return list(ChatMessage.objects.filter(document=document))
 
 
 ####################################################################################################
@@ -164,7 +172,7 @@ def _process_chat_message(chat_message, request):
     chat_messages = _fetch_chat_messages(document)
 
     llm_response = AgentFactory.create_agent(
-        AgentType[chat_message.current_workflow_element.agent.id]
+        AgentType[chat_message.current_workflow_element.agent.type]
     ).process(chat_messages)
 
     logger.debug(
@@ -239,8 +247,8 @@ def _handle_llm_response(
     chat_message = ChatMessage.objects.create(
         document=document,
         message=llm_response["response_message"],
-        from_agent_type=AgentType[workflow_element.agent.id],
-        from_id=workflow_element.agent.id,
+        from_agent_type=AgentType[workflow_element.agent.type],
+        from_id=workflow_element.agent.type,
         to_id=request.user.id,
         to_agent_type=AgentType.USER,
         current_document=new_version,
