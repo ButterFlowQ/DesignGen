@@ -9,6 +9,7 @@ class AgentType(Enum):
 
     USER = auto()
     REQUIREMENT = auto()
+    ARCHITECTURE = auto()
     DATABASE = auto()
 
 
@@ -42,3 +43,4 @@ class LLMResponse(TypedDict):
     updated_workflow_doc: Any
     response_message: str
     move_to_next_workflow: bool
+    agent_id: str

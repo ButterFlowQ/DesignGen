@@ -19,7 +19,7 @@ class LLMWrapper:
         self.model = "anthropic:claude-3-5-sonnet-20241022"
 
     def get_response(
-        self, messages: List[Dict[str, str]], expected_fields: List[str]
+        self, messages: List[Dict[str, str]], expected_fields: Dict[str, str]
     ) -> LLMResponse:
         """
         Attempts to retrieve a valid structured response from the AI model.
@@ -55,14 +55,13 @@ class LLMWrapper:
                     raw_response = self._get_completion(messages)
 
                 parsed_response = json.loads(raw_response)
-                if not all(key in parsed_response for key in expected_fields):
+                if not all(key in parsed_response for key in expected_fields.values()):
                     raise ValueError("Missing required fields in the model response.")
 
-                return LLMResponse(
-                    updated_workflow_doc=parsed_response[expected_fields[0]],
-                    response_message=parsed_response[expected_fields[1]],
-                    move_to_next_workflow=parsed_response[expected_fields[2]],
-                )
+                resp = LLMResponse()
+                for key, value in expected_fields.items():
+                    setattr(resp, key, parsed_response[value])
+                return resp
             except (ValueError, AttributeError, TypeError, json.JSONDecodeError) as exc:
                 attempt_count += 1
                 last_exception = exc

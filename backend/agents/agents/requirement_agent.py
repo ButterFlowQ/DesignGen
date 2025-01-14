@@ -63,7 +63,11 @@ class RequirementAgent(AgentInterface):
         )
 
         # The keys we expect in the model's JSON response
-        response_format = ["requirements", "communication", "ready_for_next_workflow"]
+        response_format = {
+            "updated_workflow_doc": "requirements",
+            "response_message": "communication",
+            "move_to_next_workflow": "ready_for_next_workflow",
+        }
         super().__init__(AgentType.REQUIREMENT, system_message, response_format)
 
     def process(self, chat_history: List[ChatMessage]) -> LLMResponse:
