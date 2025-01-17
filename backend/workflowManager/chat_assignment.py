@@ -49,7 +49,11 @@ class ChatAssignment:
             llm_messages.append({"role": role, "content": message_content})
         response_format = {"agent_id": "agent_id"}
         llm_response = self.llm.get_response(llm_messages, response_format)
-        return workflow_elements[int(llm_response["agent_id"])]
+        assigned_element = int(llm_response["agent_id"])
+        for workflow_element in workflow_elements:
+            if workflow_element.id == assigned_element:
+                return workflow_element
+        raise ValueError("No workflow element found")
 
     def _build_system_prompt(self, workflow_element_prompts):
         """
@@ -58,7 +62,7 @@ class ChatAssignment:
         """
         instructions = (
             "You are an AI that determines which agent should handle the last user message.\n\n"
-            "We have multiple agents with different responsibilities:\n"
+            "We have multiple agents with different responsibilities, it is of format **<agent_id>**: <responsiblity>:\n"
         )
 
         for agent_name, prompt_text in workflow_element_prompts.items():

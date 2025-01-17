@@ -10,7 +10,7 @@ from agents.agent_factory import AgentFactory
 from agents.types import AgentType, LLMResponse
 
 from ..models.models import Document, ChatMessage, VersionedDocument, WorkflowElement
-from ..chat_assignment import assign_workflow_element
+from ..chat_assignment import ChatAssignment
 
 # Create a logger for this module.
 logger = logging.getLogger(__name__)
@@ -165,7 +165,8 @@ def _process_chat_message(chat_message, request):
         chat_message.document.id if chat_message.document else None,
     )
 
-    assign_workflow_element(chat_message)
+    assignment_engine = ChatAssignment()
+    assignment_engine.assign_workflow_element(chat_message)
     chat_message.save()
 
     document = chat_message.document

@@ -60,7 +60,7 @@ class LLMWrapper:
 
                 resp = LLMResponse()
                 for key, value in expected_fields.items():
-                    setattr(resp, key, parsed_response[value])
+                    resp[key] = parsed_response[value]
                 return resp
             except (ValueError, AttributeError, TypeError, json.JSONDecodeError) as exc:
                 attempt_count += 1
