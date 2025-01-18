@@ -16,7 +16,8 @@ class LLMWrapper:
         Initializes the LLMWrapper with the default AI client and model.
         """
         self.client = ai.Client()
-        self.model = "anthropic:claude-3-5-sonnet-20241022"
+        self.model = "openai:o1-mini-2024-09-12" # "anthropic:claude-3-5-sonnet-20241022" # o1-mini-2024-09-12, o1-2024-12-17
+
 
     def get_response(
         self, messages: List[Dict[str, str]], expected_fields: Dict[str, str]
