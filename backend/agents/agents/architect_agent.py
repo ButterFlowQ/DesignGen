@@ -4,18 +4,12 @@ from agents.types import AgentType, LLMMessage, LLMResponse
 from workflowManager.models.models import ChatMessage
 
 from .agent_interface import AgentInterface
+from .helper import get_message_content
 
 
 class ArchitectureAgent(AgentInterface):
     """
     An agent responsible for handling and refining the system architecture in a design pipeline.
-
-    Responsibilities include:
-      1. Evaluating the design constraints and business requirements
-      2. Proposing initial architecture or refining existing architecture
-      3. Identifying potential architectural patterns and trade-offs
-      4. Ensuring the architecture aligns with performance, scalability, and business goals
-      5. Communicating architectural decisions to stakeholders
     """
 
     def __init__(self) -> None:
@@ -33,7 +27,8 @@ class ArchitectureAgent(AgentInterface):
             "in the following JSON format:\n\n"
             "{\n"
             '  "document": {\n'
-            '      "requirements": [...],\n'
+            '      "functional_requirements": [...],\n'
+            '      "non_functional_requirements": [...],\n'
             '      "architecture": {...}\n'
             "  },\n"
             '  "user_message": "User\'s input or request regarding architecture"\n'
@@ -91,40 +86,7 @@ class ArchitectureAgent(AgentInterface):
             is_user_agent = chat.from_agent_type == AgentType.USER.value
 
             role = "assistant" if is_architecture_agent else "user"
-            message_content = self.get_message_content(chat, is_user_agent)
+            message_content = get_message_content(chat, is_user_agent, "architecture")
             llm_messages.append({"role": role, "content": message_content})
 
         return llm_messages
-
-    def get_message_content(self, chat: ChatMessage, is_user_agent: bool) -> str:
-        """
-        Builds the appropriate message content depending on whether the sender is a user or
-        the ArchitectureAgent.
-
-        :param chat: The ChatMessage being processed.
-        :param is_user_agent: True if the sender is the user, False otherwise.
-        :return: A string containing the relevant content for the LLM.
-        """
-        if is_user_agent:
-            # Retrieve the relevant document (if it exists)
-            if chat.document:
-                document_text = self.get_relevant_document(chat.document)
-            else:
-                document_text = "No document available."
-
-            return (
-                f"{chat.message}\n\n"
-                "Based on the document provided below, please propose or update the architecture:\n"
-                f"Document:\n{document_text}"
-            )
-        return chat.message
-
-    def get_relevant_document(self, document) -> str:
-        """
-        Returns a string representation of the given document. If you need more complex
-        behavior (e.g., extracting only 'architecture' fields), adapt this method accordingly.
-
-        :param document: The Document object or a related entity from ChatMessage.
-        :return: A string representing the document content.
-        """
-        return str(document)

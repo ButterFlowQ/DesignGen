@@ -2,15 +2,18 @@ from enum import Enum, auto
 from typing import Any, TypedDict
 
 
-class AgentType(Enum):
+class AgentType(str, Enum):
     """
     An enumeration representing various agent types in the system.
     """
 
-    USER = auto()
-    REQUIREMENT = auto()
+    USER = "user"
+    FUNCTIONAL_REQUIREMENT = auto()
+    NON_FUNCTIONAL_REQUIREMENT = auto()
     ARCHITECTURE = auto()
-    DATABASE = auto()
+    API_CONTRACT = auto()
+    DATABASE_SCHEMA = auto()
+    # PERFORMANCE_OPTIMIZATION = auto()
 
 
 class LLMMessage(TypedDict):
