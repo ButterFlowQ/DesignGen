@@ -1,8 +1,8 @@
 from .agents.agent_interface import AgentInterface
 from .agents.functional_requirement_agent import FunctionalRequirementAgent
 from .agents.non_functional_requirement_agent import NonFunctionalRequirementAgent
-from .agents.architect_agent import ArchitectAgent
-from .agents.api_contract_agent import ApiContractAgent
+from .agents.architect_agent import ArchitectureAgent
+from .agents.api_contract_agent import APIContractAgent
 from .agents.database_schema_agent import DatabaseSchemaAgent
 # from .agents.performance_optimization_agent import PerformanceOptimizationAgent
 from .types import AgentType
@@ -16,8 +16,8 @@ class AgentFactory:
     _agent_registry = {
         AgentType.FUNCTIONAL_REQUIREMENT: FunctionalRequirementAgent,
         AgentType.NON_FUNCTIONAL_REQUIREMENT: NonFunctionalRequirementAgent,
-        AgentType.ARCHITECTURE: ArchitectAgent,
-        AgentType.API_CONTRACT: ApiContractAgent,
+        AgentType.ARCHITECTURE: ArchitectureAgent,
+        AgentType.API_CONTRACT: APIContractAgent,
         AgentType.DATABASE_SCHEMA: DatabaseSchemaAgent,
         # AgentType.PERFORMANCE_OPTIMIZATION: PerformanceOptimizationAgent,
     }
