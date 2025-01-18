@@ -189,7 +189,7 @@ def _process_chat_message(chat_message, request):
         _process_chat_message(new_chat_message, request)
 
 
-####################################################################################################
+##########################################################sn##########################################
 
 
 @transaction.atomic
@@ -248,11 +248,12 @@ def _handle_llm_response(
     chat_message = ChatMessage.objects.create(
         document=document,
         message=llm_response["response_message"],
-        from_agent_type=AgentType[workflow_element.agent.type],
+        from_agent_type=ChatMessage.AgentTypeChoices.AGENT,
         from_id=workflow_element.agent.type,
         to_id=request.user.id,
-        to_agent_type=AgentType.USER,
+        to_agent_type=ChatMessage.AgentTypeChoices.USER,
         current_document=new_version,
+        current_workflow_element=workflow_element,
     )
 
     logger.info(

@@ -91,13 +91,20 @@ class ChatAssignment:
         if is_user_agent:
             # Retrieve the relevant document (if it exists)
             if chat.document:
-                document_text = chat.document.text
+                document_text = chat.current_document.workflow_elements[chat.current_workflow_element.id]
             else:
                 document_text = "No document available."
 
+            agent_type = chat.to_agent_type
             return (
                 f"{chat.message}\n\n"
-                "Update the doc given below as desired:\n"
+                f"Based on the document provided below, please propose or update the {agent_type}:\n"
                 f"Document:\n{document_text}"
             )
-        return chat.message
+        
+        agent_type = chat.from_agent_type
+        document_text = chat.current_document.workflow_elements[chat.current_workflow_element.id]
+        return (
+            f"{chat.message}\n\n"
+            f"Updated {agent_type}:\n{document_text}"
+        )
