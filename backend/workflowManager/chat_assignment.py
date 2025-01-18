@@ -82,7 +82,7 @@ class ChatAssignment:
     def _get_message_content(self, chat: ChatMessage, is_user_agent: bool) -> str:
         """
         Builds the appropriate message content depending on whether the sender is a user or
-        the RequirementAgent.
+        the Agent.
 
         :param chat: The ChatMessage being processed.
         :param is_user_agent: True if the sender is the user, False otherwise.
@@ -97,7 +97,7 @@ class ChatAssignment:
 
             return (
                 f"{chat.message}\n\n"
-                "Update the requirements in the doc given below as desired:\n"
+                "Update the doc given below as desired:\n"
                 f"Document:\n{document_text}"
             )
         return chat.message
