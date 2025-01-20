@@ -41,7 +41,7 @@ class ChatAssignment:
         llm_messages.append({"role": "system", "content": system_message})
         for chat in chat_messages:
             # Compare the enum's value to the stored string
-            is_requirement_agent = chat.from_agent_type == AgentType.REQUIREMENT.value
+            is_requirement_agent = chat.from_agent_type != AgentType.USER.value
             is_user_agent = chat.from_agent_type == AgentType.USER.value
 
             role = "assistant" if is_requirement_agent else "user"
@@ -90,7 +90,7 @@ class ChatAssignment:
         """
         if is_user_agent:
             # Retrieve the relevant document (if it exists)
-            if chat.document:
+            if chat.current_document:
                 document_text = chat.current_document.workflow_elements[chat.current_workflow_element.id]
             else:
                 document_text = "No document available."

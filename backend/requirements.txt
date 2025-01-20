@@ -1,4 +1,4 @@
-aisuite==0.1.6
+aisuite[all]==0.1.6
 annotated-types==0.7.0
 anthropic==0.30.1
 anyio==4.7.0

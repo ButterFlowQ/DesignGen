@@ -98,7 +98,7 @@ class DatabaseSchemaAgent(AgentInterface):
             is_user_agent = chat.from_agent_type == AgentType.USER.value
 
             role = "assistant" if is_db_agent else "user"
-            message_content = get_message_content(chat, is_user_agent, "database_schema")
+            message_content = get_message_content(chat, is_user_agent)
             llm_messages.append({"role": role, "content": message_content})
 
         return llm_messages 

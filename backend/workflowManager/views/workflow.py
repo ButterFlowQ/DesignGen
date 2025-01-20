@@ -263,9 +263,9 @@ def _handle_llm_response(
     )
 
     # Move to next workflow if required
-    if llm_response["move_to_next_workflow"]:
-        logger.info("Moving Document ID %s to next workflow.", document.id)
-        document.workflow = document.workflow.next_workflow
-        document.save()
+    # if llm_response["move_to_next_workflow"]:
+    #     logger.info("Moving Document ID %s to next workflow.", document.id)
+    #     document.workflow = document.workflow.next_workflow
+    #     document.save()
 
     return chat_message
