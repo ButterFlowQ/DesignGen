@@ -193,9 +193,9 @@ def _process_chat_message(chat_message, request):
         llm_response, document, chat_message.current_workflow_element, request
     )
 
-    if llm_response["move_to_next_workflow"]:
-        logger.info("LLM indicates move to next workflow. Processing next step.")
-        _process_chat_message(new_chat_message, request)
+    # if llm_response["move_to_next_workflow"]:
+    #     logger.info("LLM indicates move to next workflow. Processing next step.")
+    #     _process_chat_message(new_chat_message, request)
 
 
 ####################################################################################################
@@ -215,7 +215,7 @@ def _handle_llm_response(
     logger.debug(
         "Handling LLM response for Document ID: %s, WorkflowElement ID: %s",
         document.id,
-        workflow_element.id,
+        workflow_element.position,
     )
 
     updated_content = llm_response["updated_workflow_doc"]
@@ -249,7 +249,7 @@ def _handle_llm_response(
     )
 
     # Update the relevant workflow element's content
-    new_version.workflow_elements[workflow_element.id] = updated_content
+    new_version.workflow_elements[workflow_element.position] = updated_content
     new_version.save()
     document.save()
 

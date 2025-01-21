@@ -13,6 +13,7 @@ class ChatAssignment:
     def assign_workflow_element(self, chat_message):
         document = chat_message.document
         chat_messages = ChatMessage.objects.filter(document=document)
+        # print(chat_messages)
         workflow = document.workflow
         workflow_elements = WorkflowElement.objects.filter(workflow=workflow)
         chat_message.current_workflow_element = self._get_workflow_element(
@@ -26,12 +27,12 @@ class ChatAssignment:
     def _get_workflow_element(
         self, document, chat_message, chat_messages, workflow_elements
     ):
-        if not chat_messages:
-            return workflow_elements[0]
+        # if not chat_messages:
+        #     return workflow_elements[0]
         llm_messages: List[LLMMessage] = []
         workflow_element_prompts = {}
         for workflow_element in workflow_elements:
-            workflow_element_prompts[workflow_element.id] = [
+            workflow_element_prompts[workflow_element.position] = [
                 workflow_element.relevancy_checking_prompt
             ]
 
@@ -51,7 +52,7 @@ class ChatAssignment:
         llm_response = self.llm.get_response(llm_messages, response_format)
         assigned_element = int(llm_response["agent_id"])
         for workflow_element in workflow_elements:
-            if workflow_element.id == assigned_element:
+            if workflow_element.position == assigned_element:
                 return workflow_element
         raise ValueError("No workflow element found")
 
@@ -89,8 +90,8 @@ class ChatAssignment:
         :return: A string containing the relevant content for the LLM.
         """
         # Retrieve the relevant document (if it exists)
-        if chat.current_document and chat.current_workflow_element and chat.current_workflow_element.id in chat.current_document.workflow_elements:
-                document_text = chat.current_document.workflow_elements[chat.current_workflow_element.id]
+        if chat.current_document and chat.current_document.workflow_elements and chat.current_workflow_element and chat.current_workflow_element.position in chat.current_document.workflow_elements:
+                document_text = chat.current_document.workflow_elements[chat.current_workflow_element.position]
         else:
             document_text = "No document available."
 

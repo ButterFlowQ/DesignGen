@@ -55,6 +55,7 @@ class LLMWrapper:
                     messages.append(error_message)
                     raw_response = self._get_completion(messages)
                 
+                print(messages)
                 print(raw_response)
 
                 parsed_response = json.loads(raw_response)
