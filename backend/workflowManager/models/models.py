@@ -56,6 +56,7 @@ class WorkflowElement(models.Model):
     position = models.IntegerField()
     agent = models.ForeignKey(Agent, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
+    json_key = models.CharField(max_length=255, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     relevancy_checking_prompt = models.TextField(null=True, blank=True)
 

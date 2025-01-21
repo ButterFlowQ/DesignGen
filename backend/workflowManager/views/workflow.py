@@ -215,7 +215,7 @@ def _handle_llm_response(
     logger.debug(
         "Handling LLM response for Document ID: %s, WorkflowElement ID: %s",
         document.id,
-        workflow_element.position,
+        workflow_element.json_key,
     )
 
     updated_content = llm_response["updated_workflow_doc"]
@@ -249,7 +249,7 @@ def _handle_llm_response(
     )
 
     # Update the relevant workflow element's content
-    new_version.workflow_elements[workflow_element.position] = updated_content
+    new_version.workflow_elements[workflow_element.json_key] = updated_content
     new_version.save()
     document.save()
 
