@@ -41,10 +41,10 @@ class ChatAssignment:
         llm_messages.append({"role": "system", "content": system_message})
         for chat in chat_messages:
             # Compare the enum's value to the stored string
-            is_requirement_agent = chat.from_agent_type != AgentType.USER.value
+            is_agent = chat.from_agent_type != AgentType.USER.value
             is_user_agent = chat.from_agent_type == AgentType.USER.value
 
-            role = "assistant" if is_requirement_agent else "user"
+            role = "assistant" if is_agent else "user"
             message_content = self._get_message_content(chat, is_user_agent)
             llm_messages.append({"role": role, "content": message_content})
         response_format = {"agent_id": "agent_id"}
@@ -68,14 +68,14 @@ class ChatAssignment:
         for agent_name, prompt_text in workflow_element_prompts.items():
             instructions += f"**{agent_name}**: {prompt_text}\n"
 
-        instructions += (
-            "\nPlease read the conversation and decide which agent name is the best match for the last message. "
-            "Your answer should be exactly one of the agent names defined above."
-            "For each interaction, you must provide a response in the following JSON format:\n\n"
-            "{\n"
-            "  'agent_id': 'agent_id'\n"
-            "}\n\n"
-        )
+        instructions += """
+            \nPlease read the conversation and decide which agent name is the best match for the last message. 
+            Your answer should be exactly one of the agent names defined above.
+            For each interaction, you must provide a response in the following JSON format:
+            {
+              'agent_id': 'agent_id'
+            }
+        """
 
         return instructions
 
@@ -88,13 +88,13 @@ class ChatAssignment:
         :param is_user_agent: True if the sender is the user, False otherwise.
         :return: A string containing the relevant content for the LLM.
         """
-        if is_user_agent:
-            # Retrieve the relevant document (if it exists)
-            if chat.current_document:
+        # Retrieve the relevant document (if it exists)
+        if chat.current_document and chat.current_workflow_element and chat.current_workflow_element.id in chat.current_document.workflow_elements:
                 document_text = chat.current_document.workflow_elements[chat.current_workflow_element.id]
-            else:
-                document_text = "No document available."
+        else:
+            document_text = "No document available."
 
+        if is_user_agent:
             agent_type = chat.to_agent_type
             return (
                 f"{chat.message}\n\n"
@@ -103,7 +103,7 @@ class ChatAssignment:
             )
         
         agent_type = chat.from_agent_type
-        document_text = chat.current_document.workflow_elements[chat.current_workflow_element.id]
+        # document_text = chat.current_document.workflow_elements[chat.current_workflow_element.id]
         return (
             f"{chat.message}\n\n"
             f"Updated {agent_type}:\n{document_text}"

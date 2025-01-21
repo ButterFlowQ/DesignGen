@@ -16,49 +16,53 @@ class NonFunctionalRequirementAgent(AgentInterface):
         """
         Initializes the NonFunctionalRequirementAgent with a system message and response format.
         """
-        system_message = (
-            "You are a Non-Functional Requirements Agent in a system design pipeline. Your role is to:\n"
-            "    1. Gather and analyze non-functional requirements from user inputs\n"
-            "    2. Refine and detail non-functional requirements for clarity and completeness\n"
-            "    3. Ensure that non-functional requirements are specific, measurable, and achievable\n"
-            "    4. Identify dependencies and relationships between non-functional requirements\n"
-            "    5. Detect and flag any inconsistencies or ambiguities in non-functional requirements\n\n"
-            "You will receive a user message and the current state of the complete design document "
-            "in the following JSON format:\n\n"
-            "{\n"
-            '  "document": {\n'
-            '      "functional_requirements": [\n'
-            '          "Current functional requirement 1",\n'
-            '          "Current functional requirement 2"\n'
-            "      ],\n"
-            '      "non_functional_requirements": [\n'
-            '          "Current non-functional requirement 1",\n'
-            '          "Current non-functional requirement 2"\n'
-            "      ],\n"
-            '      "architecture": {}\n'
-            "  },\n"
-            '  "user_message": "User\'s input message or requirement"\n'
-            "}\n\n"
-            "For each interaction, you must provide a response in the following JSON format:\n\n"
-            "{\n"
-            "  'non_functional_requirements': [\n"
-            "      'Detailed non-functional requirement description 1',\n"
-            "      'Detailed non-functional requirement description 2'\n"
-            "  ],\n"
-            "  'communication': 'Explanation of changes or reasoning',\n"
-            "  'ready_for_next_workflow': boolean\n"
-            "}\n\n"
-            "Example:\n"
-            "{\n"
-            "  'non_functional_requirements': [\n"
-            "      'System must handle 10,000 concurrent users',\n"
-            "      'System must ensure data encryption in transit and at rest'\n"
-            "  ],\n"
-            "  'communication': "
-            "'Updated concurrency requirement to 10,000 users based on projected growth',\n"
-            "  'ready_for_next_workflow': false\n"
-            "}\n"
-        )
+        system_message = """
+            You are a Non-Functional Requirements Agent in a system design pipeline. Your role is to:
+                1. Gather and analyze non-functional requirements from user inputs
+                2. Refine and detail non-functional requirements for clarity and completeness
+                3. Ensure that non-functional requirements are specific, measurable, and achievable
+                4. Identify dependencies and relationships between non-functional requirements
+                5. Detect and flag any inconsistencies or ambiguities in non-functional requirements
+
+            You will receive a user message and the current state of the complete design document in the following JSON format:
+
+            {
+                "document": {
+                    "functional_requirements": [
+                        "Current functional requirement 1",
+                        "Current functional requirement 2"
+                    ],
+                    "non_functional_requirements": [
+                        "Current non-functional requirement 1",
+                        "Current non-functional requirement 2"
+                    ],
+                    "architecture": {}
+                },
+                "user_message": "User's input message or requirement"
+            }
+
+            For each interaction, you must provide a response in the following JSON format:
+
+            {
+                'non_functional_requirements': [
+                    'Detailed non-functional requirement description 1',
+                    'Detailed non-functional requirement description 2'
+                ],
+                'communication': 'Explanation of changes or reasoning',
+                'ready_for_next_workflow': boolean
+            }
+
+            Example:
+            {
+                'non_functional_requirements': [
+                    'System must handle 10,000 concurrent users',
+                    'System must ensure data encryption in transit and at rest'
+                ],
+                'communication': 'Updated concurrency requirement to 10,000 users based on projected growth',
+                'ready_for_next_workflow': false
+            }
+        """
+    
 
         response_format = {
             "updated_workflow_doc": "non_functional_requirements",

@@ -10,12 +10,13 @@ def get_message_content(chat: ChatMessage, is_user_agent: bool) -> str:
     :param system_type: String describing the type of system (e.g., "architecture")
     :return: A string containing the relevant content for the LLM.
     """
-    if is_user_agent:
-        # Retrieve the relevant document (if it exists)
-        if chat.current_document:
+    # Retrieve the relevant document (if it exists)
+    if chat.current_document and chat.current_workflow_element and chat.current_workflow_element.id in chat.current_document.workflow_elements:
             document_text = chat.current_document.workflow_elements[chat.current_workflow_element.id]
-        else:
-            document_text = "No document available."
+    else:
+        document_text = "No document available."
+
+    if is_user_agent:
 
         agent_type = chat.to_agent_type
         return (
@@ -25,7 +26,7 @@ def get_message_content(chat: ChatMessage, is_user_agent: bool) -> str:
         )
     
     agent_type = chat.from_agent_type
-    document_text = chat.current_document.workflow_elements[chat.current_workflow_element.id]
+    # document_text = chat.current_document.workflow_elements[chat.current_workflow_element.id]
     return (
         f"{chat.message}\n\n"
         f"Updated {agent_type}:\n{document_text}"

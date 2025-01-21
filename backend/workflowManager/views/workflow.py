@@ -97,12 +97,19 @@ def _build_send_chat_message_response(data, request):
     else:
         in_reply_to = None
 
+    # print(document.latest_version)
+    # print(VersionedDocument.objects.filter(document=document).latest("version").version)
+    current_versioned_document = VersionedDocument.objects.get(
+        document=document, version=document.latest_version
+    )
+
     chat_message = ChatMessage.objects.create(
         message=data["message"],
         document=document,
         in_reply_to=in_reply_to,
         from_agent_type=AgentType.USER,
         from_id=request.user.id,  # Ensure user is authenticated
+        current_document=current_versioned_document,
     )
 
     logger.info(
@@ -171,6 +178,8 @@ def _process_chat_message(chat_message, request):
 
     document = chat_message.document
     chat_messages = _fetch_chat_messages(document)
+
+    # print(chat_messages)
 
     llm_response = AgentFactory.create_agent(
         AgentType[chat_message.current_workflow_element.agent.type]

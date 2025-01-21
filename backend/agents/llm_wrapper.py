@@ -54,6 +54,8 @@ class LLMWrapper:
                     }
                     messages.append(error_message)
                     raw_response = self._get_completion(messages)
+                
+                print(raw_response)
 
                 parsed_response = json.loads(raw_response)
                 if not all(key in parsed_response for key in expected_fields.values()):
@@ -85,6 +87,6 @@ class LLMWrapper:
         :return: The AI model's response content as a string.
         """
         response = self.client.chat.completions.create(
-            model=self.model, messages=messages, temperature=0.25
+            model=self.model, messages=messages, temperature=0.25, response_format={"type": "json_object"}
         )
         return response.choices[0].message.content
