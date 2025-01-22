@@ -30,7 +30,6 @@ class DocumentElement(models.Model):
 
     document_schema = models.ForeignKey(DocumentSchema, on_delete=models.CASCADE)
     position = models.IntegerField()
-    agent = models.ForeignKey(Agent, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
 
@@ -104,10 +103,6 @@ class ChatMessage(models.Model):
     Represents a single chat message associated with a Document.
     Messages can be sent by a user or an agent.
     """
-
-    class AgentTypeChoices(models.TextChoices):
-        AGENT = "agent", "Agent"
-        USER = "user", "User"
 
     document = models.ForeignKey(
         Document, on_delete=models.CASCADE, null=True, blank=True

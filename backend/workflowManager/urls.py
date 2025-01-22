@@ -1,7 +1,7 @@
 from django.urls import path
 
 from .views.document import create_document, get_document
-from .views.workflow import send_chat_message, get_chat_message
+from .views.chat import send_chat_message, get_chat_message
 
 # Document APIS
 urlpatterns = [
