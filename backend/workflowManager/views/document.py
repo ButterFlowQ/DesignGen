@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 
-from ..models.models import Document, Workflow, VersionedDocument
+from ..models.models import Document, DocumentSchema, VersionedDocument
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +24,7 @@ def create_document(request):
     Creates a new Document and its initial VersionedDocument.
     Expects a POST request with JSON containing:
       {
-        "workflow": <workflow_id> (required),
+        "document_schema": <document_schema_id> (required),
         "latest_version": <int>,
         "title": <str> (required)
       }
@@ -87,12 +87,12 @@ def get_document(request, document_id):
     Returns JSON with:
       {
         "id": <document_id>,
-        "workflow": <workflow_id>,
+        "document_schema": <document_schema_id>,
         "owner": <owner_id>,
         "latest_version": <document_latest_version>,
         "title": <latest_versioned_document_title>,
         "version": <latest_versioned_document_version>,
-        "workflow_elements": <latest_versioned_document_elements>,
+        "document_elements": <latest_versioned_document_elements>,
       }
     """
     logger.info("Received request to get Document with ID: %s", document_id)
@@ -128,12 +128,12 @@ def get_document(request, document_id):
 
     response = {
         "id": document.id,
-        "workflow": document.workflow.id if document.workflow else None,
+        "document_schema": document.document_schema.id if document.document_schema else None,
         "owner": document.owner.id if document.owner else None,
         "latest_version": document.latest_version,
         "title": versioned_document.title,
         "version": versioned_document.version,
-        "workflow_elements": versioned_document.workflow_elements,
+        "document_elements": versioned_document.document_elements,
     }
 
     logger.info("Successfully retrieved Document (ID=%s).", document.id)
@@ -147,12 +147,12 @@ def get_document(request, document_id):
 
 def _validate_create_document_request_data(data):
     """
-    Checks whether the required fields ('workflow' and 'title') are present
+    Checks whether the required fields ('document_schema' and 'title') are present
     in the data and returns a JsonResponse if there's a problem. Otherwise None.
     """
     logger.debug("Validating create_document request data.")
     missing_fields = []
-    for field in ["workflow", "title"]:
+    for field in ["document_schema", "title"]:
         if field not in data:
             missing_fields.append(field)
 
@@ -207,24 +207,24 @@ def _create_document_from_data(request, data):
     """
     Private helper function that creates and returns a new Document
     based on the validated JSON data and the authenticated user.
-    Raises ValidationError if the workflow is not found.
+    Raises ValidationError if the document_schema is not found.
     """
-    workflow_id = data["workflow"]
+    document_schema_id = data["document_schema"]
     latest_version = data.get("latest_version", 0)
 
     logger.debug(
-        "Creating Document with workflow_id=%s, latest_version=%s",
-        workflow_id,
+        "Creating Document with document_schema_id=%s, latest_version=%s",
+        document_schema_id,
         latest_version,
     )
 
-    workflow = Workflow.objects.filter(id=workflow_id).first()
-    if not workflow:
-        logger.warning("Workflow ID %s not found. Cannot create Document.", workflow_id)
-        raise ValidationError(f"Workflow with ID {workflow_id} does not exist.")
+    document_schema = DocumentSchema.objects.filter(id=document_schema_id).first()
+    if not document_schema:
+        logger.warning("Document Schema ID %s not found. Cannot create Document.", document_schema_id)
+        raise ValidationError(f"Document Schema with ID {document_schema_id} does not exist.")
 
     document = Document.objects.create(
-        workflow=workflow,
+        document_schema=document_schema,
         owner=request.user,
         latest_version=latest_version,
     )
