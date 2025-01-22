@@ -10,7 +10,6 @@ from agents.agent_factory import AgentFactory
 from agents.types import AgentType, LLMResponse
 
 from ..models.models import Document, ChatMessage, VersionedDocument, WorkflowElement
-from ..chat_assignment import ChatAssignment
 
 # Create a logger for this module.
 logger = logging.getLogger(__name__)
@@ -184,10 +183,6 @@ def _process_chat_message(chat_message, request):
         llm_response, document, chat_message.current_workflow_element, request
     )
 
-    if llm_response["move_to_next_workflow"]:
-        logger.info("LLM indicates move to next workflow. Processing next step.")
-        _process_chat_message(new_chat_message, request)
-
 
 ####################################################################################################
 
@@ -261,11 +256,5 @@ def _handle_llm_response(
         chat_message.id,
         llm_response["response_message"],
     )
-
-    # Move to next workflow if required
-    if llm_response["move_to_next_workflow"]:
-        logger.info("Moving Document ID %s to next workflow.", document.id)
-        document.workflow = document.workflow.next_workflow
-        document.save()
 
     return chat_message

@@ -25,10 +25,10 @@ class Agent(models.Model):
         ordering = ["type"]
 
 
-class Workflow(models.Model):
+class DocumentSchema(models.Model):
     """
-    Represents a sequence of steps (WorkflowElements) that
-    define how a document should be processed or updated.
+    Represents different parts of a document (WorkflowElements) that
+    define what a document is composed of.
     """
 
     name = models.CharField(max_length=255)
@@ -38,34 +38,31 @@ class Workflow(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = "Workflow"
-        verbose_name_plural = "Workflows"
+        verbose_name = "Document schema"
+        verbose_name_plural = "Document schemas"
         ordering = ["name"]
 
 
-class WorkflowElement(models.Model):
+class DocumentElement(models.Model):
     """
-    Represents a single step in a Workflow. Each element is associated with:
-    - A specific Workflow
-    - A position within that Workflow
-    - An Agent responsible for this step
-    - A prompt for relevancy checking (if applicable)
+    Represents a single part of a DocumentSchema. Each element is associated with:
+    - A specific DocumentSchema
+    - A position within that DocumentSchema
     """
 
-    workflow = models.ForeignKey(Workflow, on_delete=models.CASCADE)
+    document_schema = models.ForeignKey(DocumentSchema, on_delete=models.CASCADE)
     position = models.IntegerField()
     agent = models.ForeignKey(Agent, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
-    relevancy_checking_prompt = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.name} (Position {self.position})"
 
     class Meta:
-        verbose_name = "Workflow Element"
-        verbose_name_plural = "Workflow Elements"
-        ordering = ["workflow", "position"]
+        verbose_name = "Document element"
+        verbose_name_plural = "Document elements"
+        ordering = ["document_schema", "position"]
 
 
 class Document(models.Model):
@@ -75,7 +72,7 @@ class Document(models.Model):
     """
 
     latest_version = models.IntegerField(default=1)
-    workflow = models.ForeignKey(Workflow, on_delete=models.CASCADE)
+    document_schema = models.ForeignKey(DocumentSchema, on_delete=models.CASCADE)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -96,16 +93,30 @@ class VersionedDocument(models.Model):
     title = models.CharField(max_length=255)
     creation_time = models.DateTimeField(auto_now_add=True)
     version = models.IntegerField()
-    workflow_elements = models.JSONField(null=True, blank=True)
+    document_elements = models.JSONField(null=True, blank=True)
     document = models.ForeignKey(Document, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.title} (Version {self.version})"
 
     class Meta:
-        verbose_name = "Versioned Document"
-        verbose_name_plural = "Versioned Documents"
+        verbose_name = "Versioned document"
+        verbose_name_plural = "Versioned documents"
         ordering = ["document", "-version"]
+
+class Conversation(models.Model):
+    """
+    Represents a conversation between a user and the agent.
+    """
+    document = models.ForeignKey(Document, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Conversation #{self.pk} for document #{self.document.pk}"
+
+    class Meta:
+        verbose_name = "Conversation"
+        verbose_name_plural = "Conversations"
+        ordering = ["document"]
 
 
 class ChatMessage(models.Model):
@@ -121,32 +132,21 @@ class ChatMessage(models.Model):
     document = models.ForeignKey(
         Document, on_delete=models.CASCADE, null=True, blank=True
     )
-    from_agent_type = models.CharField(
-        max_length=5, choices=AgentTypeChoices.choices, null=True, blank=True
-    )
-    from_id = models.CharField(max_length=255, null=True, blank=True)
-    in_reply_to = models.ForeignKey(
-        "self", on_delete=models.CASCADE, null=True, blank=True
-    )
     creation_time = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     message = models.TextField(null=True, blank=True)
+    is_user_message = models.BooleanField(default=False)
+    from_id = models.CharField(max_length=255, null=True, blank=True)
+    to_id = models.CharField(max_length=255, null=True, blank=True)
     current_document = models.ForeignKey(
         VersionedDocument, on_delete=models.CASCADE, null=True, blank=True
     )
-    to_agent_type = models.CharField(
-        max_length=5, choices=AgentTypeChoices.choices, null=True, blank=True
-    )
-    to_id = models.CharField(max_length=255, null=True, blank=True)
-    start_position = models.IntegerField(null=True, blank=True)
-    end_position = models.IntegerField(null=True, blank=True)
-    current_workflow_element = models.ForeignKey(
-        WorkflowElement, on_delete=models.CASCADE, null=True, blank=True
-    )
+    conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
-        return f"ChatMessage #{self.pk} from {self.from_agent_type} ({self.from_id})"
+        return f"ChatMessage #{self.pk} from {self.from_id} ({self.to_id})"
 
     class Meta:
         verbose_name = "Chat Message"
         verbose_name_plural = "Chat Messages"
         ordering = ["creation_time"]
+
