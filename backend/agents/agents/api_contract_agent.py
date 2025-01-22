@@ -58,7 +58,7 @@ class APIContractAgent(AgentInterface):
         )
 
         response_format = {
-            "updated_workflow_doc": "api_contracts",
+            "updated_doc_element": "api_contracts",
             "response_message": "communication",
             "move_to_next_workflow": "ready_for_next_workflow",
         }

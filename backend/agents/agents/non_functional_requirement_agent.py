@@ -72,7 +72,7 @@ class NonFunctionalRequirementAgent(AgentInterface):
         """
 
         response_format = {
-            "updated_workflow_doc": "updated non functional requirements",
+            "updated_doc_element": "updated non functional requirements",
             "response_message": "communication",
         }
         super().__init__(

@@ -48,7 +48,7 @@ class ArchitectureAgent(AgentInterface):
 
         # The keys we expect in the model's JSON response
         response_format = {
-            "updated_workflow_doc": "architecture",
+            "updated_doc_element": "architecture",
             "response_message": "communication",
             "move_to_next_workflow": "ready_for_next_workflow",
         }

@@ -75,7 +75,7 @@ class FunctionalRequirementAgent(AgentInterface):
 
         # The keys we expect in the model's JSON response
         response_format = {
-            "updated_workflow_doc": "updated functional requirements",
+            "updated_doc_element": "updated functional requirements",
             "response_message": "communication",
         }
         super().__init__(

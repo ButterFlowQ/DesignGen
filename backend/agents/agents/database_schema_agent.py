@@ -66,7 +66,7 @@ class DatabaseSchemaAgent(AgentInterface):
         )
 
         response_format = {
-            "updated_workflow_doc": "database_schema",
+            "updated_doc_element": "database_schema",
             "response_message": "communication",
             "move_to_next_workflow": "ready_for_next_workflow",
         }

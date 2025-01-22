@@ -60,7 +60,9 @@ def send_chat_message(request):
         chat_message.document.id if chat_message.document else None,
     )
 
-    return _serialize_chat_messages(_fetch_chat_messages(chat_message.document))
+    return _serialize_chat_messages(
+        _fetch_chat_messages(chat_message.document, chat_message.conversation)
+    )
 
 
 @csrf_exempt
@@ -98,7 +100,8 @@ def _build_send_chat_message_response(data, request):
     """
     logger.debug("Building chat message from request data.")
     document = get_object_or_404(Document, pk=data["document_id"])
-    if data["conversation_id"]:
+    new_version = VersionedDocument.objects.filter(document=document).latest("version")
+    if "conversation_id" in data:
         conversation = get_object_or_404(Conversation, pk=data["conversation_id"])
     else:
         conversation = Conversation.objects.create(document=document)
@@ -108,9 +111,9 @@ def _build_send_chat_message_response(data, request):
         document=document,
         to_id=data["to_id"],
         is_user_message=True,
-        from_agent_type=AgentType.USER,
         from_id=request.user.id,  # Ensure user is authenticated
         conversation=conversation,
+        current_document=new_version,
     )
 
     logger.info(
@@ -124,12 +127,14 @@ def _build_send_chat_message_response(data, request):
 ####################################################################################################
 
 
-def _fetch_chat_messages(document):
+def _fetch_chat_messages(document, conversation=None):
     """
     Private method that returns all ChatMessage objects for a given Document.
     """
     logger.debug("Fetching chat messages for Document ID: %s", document.id)
-    return list(ChatMessage.objects.filter(document=document))
+    return list(
+        ChatMessage.objects.filter(document=document, conversation=conversation)
+    )
 
 
 ####################################################################################################
@@ -144,13 +149,12 @@ def _serialize_chat_messages(chat_messages):
         {
             "id": msg.id,
             "message": msg.message,
-            "from_agent_type": msg.from_agent_type,
             "from_id": msg.from_id,
-            "to_agent_type": msg.to_agent_type,
             "to_id": msg.to_id,
             "current_document": (
                 msg.current_document.id if msg.current_document else None
             ),
+            "llm_raw_response": msg.llm_raw_response,
         }
         for msg in chat_messages
     ]
@@ -177,8 +181,9 @@ def _process_chat_message(chat_message, request):
     )
 
     document = chat_message.document
+    conversation = chat_message.conversation
     document_element = DocumentElement.objects.get(pk=chat_message.to_id)
-    chat_messages = _fetch_chat_messages(document)
+    chat_messages = _fetch_chat_messages(document, conversation)
 
     llm_response = AgentFactory.create_agent(AgentType[document_element.type]).process(
         chat_messages
@@ -188,7 +193,9 @@ def _process_chat_message(chat_message, request):
         "LLM response for ChatMessage ID %s: %s", chat_message.id, llm_response
     )
 
-    _handle_llm_response(llm_response, document, document_element, request)
+    _handle_llm_response(
+        llm_response, document, document_element, request, conversation
+    )
 
 
 ####################################################################################################
@@ -200,6 +207,7 @@ def _handle_llm_response(
     document: Document,
     document_element: DocumentElement,
     request,
+    conversation,
 ):
     """
     Private method that applies the LLM response to update document versions,
@@ -233,6 +241,7 @@ def _handle_llm_response(
         document=document,
         version=document.latest_version,
         document_elements=previous_version.document_elements or {},
+        title=previous_version.title,
     )
 
     logger.debug(
@@ -242,7 +251,7 @@ def _handle_llm_response(
     )
 
     # Update the relevant workflow element's content
-    new_version.document_elements[document_element.id] = updated_content
+    new_version.document_elements[document_element.name] = updated_content
     new_version.save()
     document.save()
 
@@ -255,6 +264,7 @@ def _handle_llm_response(
         current_document=new_version,
         is_user_message=False,
         llm_raw_response=llm_response["raw_response"],
+        conversation=conversation,
     )
 
     logger.info(

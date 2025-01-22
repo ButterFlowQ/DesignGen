@@ -9,7 +9,6 @@ class DocumentSchema(models.Model):
     """
 
     name = models.CharField(max_length=255)
-    type = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
 
     def __str__(self):
@@ -32,6 +31,7 @@ class DocumentElement(models.Model):
     position = models.IntegerField()
     name = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
+    type = models.CharField(max_length=255)
 
     def __str__(self):
         return f"{self.name} (Position {self.position})"
