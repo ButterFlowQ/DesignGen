@@ -35,7 +35,7 @@ class AgentInterface:
         llm_messages: List[LLMMessage] = []
 
         # Add the system message as the first message
-        llm_messages.append({"role": "system", "content": self.system_message})
+        llm_messages.append({"role": "user", "content": self.system_message})
 
         # Convert chat history
         for chat in chat_history:

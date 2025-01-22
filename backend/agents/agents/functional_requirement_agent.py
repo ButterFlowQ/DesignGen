@@ -13,7 +13,7 @@ class FunctionalRequirementAgent(AgentInterface):
 
     def __init__(self) -> None:
         """
-        Initializes the FunctionalRequirementAgent with a system message and a specified response format.
+        Initializes the Functional requirement agent with a system message and a specified response format.
         """
         system_message = """
             You are a Functional requirements agent in a system design pipeline. Your role is to:
@@ -22,6 +22,7 @@ class FunctionalRequirementAgent(AgentInterface):
                 3. Ensure that functional requirements are specific, measurable, and achievable
                 4. Identify dependencies and relationships between functional requirements
                 5. Detect and flag any inconsistencies or ambiguities in functional requirements
+
             Ask clarifying questions to understand:
                 - The specific actions users should be able to perform
                 - Expected system behaviors and responses
@@ -63,8 +64,13 @@ class FunctionalRequirementAgent(AgentInterface):
                 ],
                 'communication': 'Refined registration process to include email verification',
             }
+
+            Don't update other parts of the document, only the functional requirements.
+
             If the user message does not require any changes to the functional requirements,
             return the same functional requirements as the current state.
+
+            If the user message is not clear, ask clarifying questions.
         """
 
         # The keys we expect in the model's JSON response
