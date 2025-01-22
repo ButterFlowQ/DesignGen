@@ -1,5 +1,4 @@
 import json
-import traceback
 from typing import List, Dict
 
 import aisuite as ai
@@ -22,58 +21,26 @@ class LLMWrapper:
         self, messages: List[Dict[str, str]], expected_fields: Dict[str, str]
     ) -> LLMResponse:
         """
-        Attempts to retrieve a valid structured response from the AI model.
-
-        :param messages: A list of message dictionaries with 'role' and 'content' fields.
-        :param expected_fields: A list of strings specifying the required JSON keys in the
-            model's response. The list order corresponds to how they're assigned in LLMResponse.
-        :return: An LLMResponse object containing the updated workflow doc, a response message,
-            and a boolean indicating if the workflow should move to the next step.
-        :raises ValueError: If a valid response is not obtained within the retry limit or if any
-            required fields are missing from the model response.
+        Gets a response from the LLM.
         """
-        max_retries = 3
-        attempt_count = 0
-        last_exception = None
-        error_trace = ""
 
-        while attempt_count < max_retries:
-            try:
-                if attempt_count == 0:
-                    raw_response = self._get_completion(messages)
-                else:
-                    # Append an error message hinting at the missing format
-                    error_message = {
-                        "role": "user",
-                        "content": (
-                            "The previous response was not in the correct format. Please provide "
-                            "the response in the exact JSON format specified in the system "
-                            f"message. Error: {last_exception}"
-                        ),
-                    }
-                    messages.append(error_message)
-                    raw_response = self._get_completion(messages)
+        try:
+            raw_response = self._get_completion(messages)
 
-                parsed_response = json.loads(raw_response)
-                if not all(key in parsed_response for key in expected_fields.values()):
-                    raise ValueError("Missing required fields in the model response.")
+            parsed_response = json.loads(raw_response)
+            if not all(key in parsed_response for key in expected_fields.values()):
+                raise ValueError("Missing required fields in the model response.")
 
-                resp = LLMResponse()
-                for key, value in expected_fields.items():
-                    resp[key] = parsed_response[value]
-                return resp
-            except (ValueError, AttributeError, TypeError, json.JSONDecodeError) as exc:
-                attempt_count += 1
-                last_exception = exc
-                error_trace = traceback.format_exc()
-            except Exception as exc:
-                # For unexpected exceptions, raise them directly
-                raise exc
+            resp = LLMResponse()
+            resp["raw_response"] = raw_response
 
-        raise ValueError(
-            f"Failed to get a valid response after {max_retries} attempts.\n"
-            f"Last error: {last_exception}\nStack trace:\n{error_trace}"
-        )
+            for key, value in expected_fields.items():
+                resp[key] = parsed_response[value]
+
+            return resp
+        except Exception as exc:
+            # For unexpected exceptions, raise them directly
+            raise exc
 
     def _get_completion(self, messages: List[Dict[str, str]]) -> str:
         """
