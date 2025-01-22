@@ -254,7 +254,7 @@ def _handle_llm_response(
         to_id=request.user.id,
         current_document=new_version,
         is_user_message=False,
-        llm_raw_response=llm_response.raw_response,
+        llm_raw_response=llm_response["raw_response"],
     )
 
     logger.info(

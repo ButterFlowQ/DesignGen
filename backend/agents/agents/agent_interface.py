@@ -1,10 +1,11 @@
 from typing import List
 import json
 
-from workflowManager.models.models import ChatMessage
+from orchestrator.models.models import ChatMessage
 
 from ..types import AgentType, LLMResponse, LLMMessage
 from ..llm_wrapper import LLMWrapper
+
 
 class AgentInterface:
     def __init__(
@@ -55,9 +56,9 @@ class AgentInterface:
         if chat.is_user_message:
             message = {
                 "user message": chat.message,
-                "document": chat.current_document.document_elements
+                "document": chat.current_document.document_elements,
             }
             return json.dumps(message)
-        
+
         else:
             return chat.llm_raw_response

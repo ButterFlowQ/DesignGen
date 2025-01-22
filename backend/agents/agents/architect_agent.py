@@ -1,7 +1,7 @@
 from typing import List
 
 from agents.types import AgentType, LLMResponse
-from workflowManager.models.models import ChatMessage
+from orchestrator.models.models import ChatMessage
 
 from .agent_interface import AgentInterface
 

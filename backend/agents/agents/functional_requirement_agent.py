@@ -1,7 +1,7 @@
 from typing import List
 
 from agents.types import AgentType, LLMResponse
-from workflowManager.models.models import ChatMessage
+from orchestrator.models.models import ChatMessage
 
 from .agent_interface import AgentInterface
 
@@ -72,7 +72,9 @@ class FunctionalRequirementAgent(AgentInterface):
             "updated_workflow_doc": "updated functional requirements",
             "response_message": "communication",
         }
-        super().__init__(AgentType.FUNCTIONAL_REQUIREMENT, system_message, response_format)
+        super().__init__(
+            AgentType.FUNCTIONAL_REQUIREMENT, system_message, response_format
+        )
 
     def process(self, chat_history: List[ChatMessage]) -> LLMResponse:
         """
