@@ -145,7 +145,7 @@ class ChatMessage(models.Model):
     conversation = models.ForeignKey(
         Conversation, on_delete=models.CASCADE, null=True, blank=True
     )
-    raw_response = models.TextField(null=True, blank=True)
+    llm_raw_response = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return f"ChatMessage #{self.pk} from {self.from_id} ({self.to_id})"
