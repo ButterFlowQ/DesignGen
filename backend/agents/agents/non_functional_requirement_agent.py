@@ -1,10 +1,9 @@
 from typing import List
 
-from agents.types import AgentType, LLMMessage, LLMResponse
+from agents.types import AgentType, LLMResponse
 from workflowManager.models.models import ChatMessage
 
 from .agent_interface import AgentInterface
-from ..helper import get_message_content
 
 
 class NonFunctionalRequirementAgent(AgentInterface):
@@ -76,23 +75,3 @@ class NonFunctionalRequirementAgent(AgentInterface):
         """
         llm_messages = self.generate_llm_history(chat_history)
         return self.llm.get_response(llm_messages, self.response_format)
-
-    def generate_llm_history(self, chat_history: List[ChatMessage]) -> List[LLMMessage]:
-        """
-        Converts the chat history into LLM-compatible messages.
-
-        :param chat_history: The history of chat messages to transform.
-        :return: A list of LLMMessage dictionaries.
-        """
-        llm_messages: List[LLMMessage] = []
-        llm_messages.append({"role": "system", "content": self.system_message})
-
-        for chat in chat_history:
-            is_nfr_agent = chat.from_agent_type == AgentType.NON_FUNCTIONAL_REQUIREMENT.value
-            is_user_agent = chat.from_agent_type == AgentType.USER.value
-
-            role = "assistant" if is_nfr_agent else "user"
-            message_content = get_message_content(chat, is_user_agent, "non_functional_requirements")
-            llm_messages.append({"role": role, "content": message_content})
-
-        return llm_messages 
