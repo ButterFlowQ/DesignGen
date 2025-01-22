@@ -16,7 +16,7 @@ class LLMWrapper:
         Initializes the LLMWrapper with the default AI client and model.
         """
         self.client = ai.Client()
-        self.model = "anthropic:claude-3-5-sonnet-20241022"
+        self.model = "openai:o1-2024-12-17" # "anthropic:claude-3-5-sonnet-20241022" # o1-mini-2024-09-12, o1-2024-12-17, gpt-4o-2024-08-06
 
     def get_response(
         self, messages: List[Dict[str, str]], expected_fields: Dict[str, str]
@@ -84,6 +84,6 @@ class LLMWrapper:
         :return: The AI model's response content as a string.
         """
         response = self.client.chat.completions.create(
-            model=self.model, messages=messages, temperature=0.25
+            model=self.model, messages=messages, temperature=0.25, response_format={"type": "json_object"}
         )
         return response.choices[0].message.content
