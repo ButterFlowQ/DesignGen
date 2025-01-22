@@ -4,7 +4,6 @@ from .agents.non_functional_requirement_agent import NonFunctionalRequirementAge
 from .agents.architect_agent import ArchitectureAgent
 from .agents.api_contract_agent import APIContractAgent
 from .agents.database_schema_agent import DatabaseSchemaAgent
-# from .agents.performance_optimization_agent import PerformanceOptimizationAgent
 from .types import AgentType
 
 
@@ -19,7 +18,6 @@ class AgentFactory:
         AgentType.ARCHITECTURE: ArchitectureAgent,
         AgentType.API_CONTRACT: APIContractAgent,
         AgentType.DATABASE_SCHEMA: DatabaseSchemaAgent,
-        # AgentType.PERFORMANCE_OPTIMIZATION: PerformanceOptimizationAgent,
     }
 
     @staticmethod

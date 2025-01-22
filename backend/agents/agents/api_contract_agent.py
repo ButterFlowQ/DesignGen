@@ -1,10 +1,9 @@
 from typing import List
 
-from agents.types import AgentType, LLMMessage, LLMResponse
-from workflowManager.models.models import ChatMessage
+from agents.types import AgentType, LLMResponse
+from orchestrator.models.models import ChatMessage
 
 from .agent_interface import AgentInterface
-from .helper import get_message_content
 
 
 class APIContractAgent(AgentInterface):
@@ -59,7 +58,7 @@ class APIContractAgent(AgentInterface):
         )
 
         response_format = {
-            "updated_workflow_doc": "api_contracts",
+            "updated_doc_element": "api_contracts",
             "response_message": "communication",
             "move_to_next_workflow": "ready_for_next_workflow",
         }
@@ -74,23 +73,3 @@ class APIContractAgent(AgentInterface):
         """
         llm_messages = self.generate_llm_history(chat_history)
         return self.llm.get_response(llm_messages, self.response_format)
-
-    def generate_llm_history(self, chat_history: List[ChatMessage]) -> List[LLMMessage]:
-        """
-        Converts the chat history into LLM-compatible messages.
-
-        :param chat_history: The history of chat messages to transform.
-        :return: A list of LLMMessage dictionaries.
-        """
-        llm_messages: List[LLMMessage] = []
-        llm_messages.append({"role": "system", "content": self.system_message})
-
-        for chat in chat_history:
-            is_api_agent = chat.from_agent_type == AgentType.API_CONTRACT.value
-            is_user_agent = chat.from_agent_type == AgentType.USER.value
-
-            role = "assistant" if is_api_agent else "user"
-            message_content = get_message_content(chat, is_user_agent, "api_contracts")
-            llm_messages.append({"role": role, "content": message_content})
-
-        return llm_messages 

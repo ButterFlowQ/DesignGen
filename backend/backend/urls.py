@@ -17,11 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.urls import include
-from workflowManager import urls
+from orchestrator import urls
 
 urlpatterns = [
     path("admin/", admin.site.urls),
 ]
 urlpatterns += [
-    path("workflowmanager/", include("workflowManager.urls")),
+    path("orchestrator/", include("orchestrator.urls")),
 ]
