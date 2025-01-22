@@ -141,7 +141,7 @@ def _serialize_chat_messages(chat_messages):
             "to_agent_type": msg.to_agent_type,
             "to_id": msg.to_id,
             "current_document": (
-                msg.current_document.id if msg.current_document else None
+                msg.current_document.workflow_elements if msg.current_document else None
             ),
         }
         for msg in chat_messages
