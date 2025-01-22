@@ -31,17 +31,17 @@ class LLMMessage(TypedDict):
 class LLMResponse(TypedDict):
     """
     A structured response from the LLM, containing:
-      1) The updated workflow document state.
+      1) The updated document element state.
       2) A response message (often returned to the user).
       3) The raw response from the LLM.
 
     Attributes:
-        updated_workflow_doc: The updated document or workflow state.
+        updated_doc_element: The updated document element state.
             Use Any if the structure can vary, or a more specific type if known.
         response_message: The LLM's response message or summary.
         raw_response: The raw response from the LLM.
     """
 
-    updated_workflow_doc: Any
+    updated_doc_element: Any
     response_message: str
     raw_response: str

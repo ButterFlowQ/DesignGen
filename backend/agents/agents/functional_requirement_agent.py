@@ -4,7 +4,7 @@ from agents.types import AgentType, LLMMessage, LLMResponse
 from workflowManager.models.models import ChatMessage
 
 from .agent_interface import AgentInterface
-from .helper import get_message_content
+from ..helper import get_message_content
 
 
 class FunctionalRequirementAgent(AgentInterface):
@@ -64,7 +64,6 @@ class FunctionalRequirementAgent(AgentInterface):
         response_format = {
             "updated_workflow_doc": "functional_requirements",
             "response_message": "communication",
-            "move_to_next_workflow": "ready_for_next_workflow",
         }
         super().__init__(AgentType.FUNCTIONAL_REQUIREMENT, system_message, response_format)
 
@@ -94,12 +93,8 @@ class FunctionalRequirementAgent(AgentInterface):
 
         # Convert chat history
         for chat in chat_history:
-            # Compare the enum's value to the stored string
-            is_functional_requirement_agent = chat.from_agent_type == AgentType.FUNCTIONAL_REQUIREMENT.value
-            is_user_agent = chat.from_agent_type == AgentType.USER.value
-
-            role = "assistant" if is_functional_requirement_agent else "user"
-            message_content = get_message_content(chat, is_user_agent, "functional requirements")
+            role = "user" if chat.is_user_message else "assistant"
+            message_content = get_message_content(chat)
             llm_messages.append({"role": role, "content": message_content})
 
         return llm_messages

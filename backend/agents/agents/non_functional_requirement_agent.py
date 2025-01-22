@@ -4,7 +4,7 @@ from agents.types import AgentType, LLMMessage, LLMResponse
 from workflowManager.models.models import ChatMessage
 
 from .agent_interface import AgentInterface
-from .helper import get_message_content
+from ..helper import get_message_content
 
 
 class NonFunctionalRequirementAgent(AgentInterface):
