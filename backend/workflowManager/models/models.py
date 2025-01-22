@@ -104,10 +104,12 @@ class VersionedDocument(models.Model):
         verbose_name_plural = "Versioned documents"
         ordering = ["document", "-version"]
 
+
 class Conversation(models.Model):
     """
     Represents a conversation between a user and the agent.
     """
+
     document = models.ForeignKey(Document, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -140,7 +142,10 @@ class ChatMessage(models.Model):
     current_document = models.ForeignKey(
         VersionedDocument, on_delete=models.CASCADE, null=True, blank=True
     )
-    conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE, null=True, blank=True)
+    conversation = models.ForeignKey(
+        Conversation, on_delete=models.CASCADE, null=True, blank=True
+    )
+    raw_response = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return f"ChatMessage #{self.pk} from {self.from_id} ({self.to_id})"
@@ -149,4 +154,3 @@ class ChatMessage(models.Model):
         verbose_name = "Chat Message"
         verbose_name_plural = "Chat Messages"
         ordering = ["creation_time"]
-

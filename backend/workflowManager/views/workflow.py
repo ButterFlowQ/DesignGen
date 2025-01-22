@@ -9,7 +9,14 @@ from django.db import transaction
 from agents.agent_factory import AgentFactory
 from agents.types import AgentType, LLMResponse
 
-from ..models.models import Document, ChatMessage, VersionedDocument, WorkflowElement
+from ..models.models import (
+    Document,
+    ChatMessage,
+    VersionedDocument,
+    DocumentSchema,
+    Conversation,
+    DocumentElement,
+)
 
 # Create a logger for this module.
 logger = logging.getLogger(__name__)
@@ -72,7 +79,7 @@ def _validate_chat_message_request(data):
     Returns a JsonResponse if any required field is missing or invalid; otherwise None.
     """
     logger.debug("Validating chat message request data.")
-    required_fields = ["message", "document_id"]
+    required_fields = ["message", "document_id", "to_id"]
     for field in required_fields:
         if field not in data:
             logger.warning("Missing required field: %s", field)
@@ -91,17 +98,19 @@ def _build_send_chat_message_response(data, request):
     """
     logger.debug("Building chat message from request data.")
     document = get_object_or_404(Document, pk=data["document_id"])
-    if "in_reply_to" in data:
-        in_reply_to = get_object_or_404(ChatMessage, pk=data["in_reply_to"])
+    if data["conversation_id"]:
+        conversation = get_object_or_404(Conversation, pk=data["conversation_id"])
     else:
-        in_reply_to = None
+        conversation = Conversation.objects.create(document=document)
 
     chat_message = ChatMessage.objects.create(
         message=data["message"],
         document=document,
-        in_reply_to=in_reply_to,
+        to_id=data["to_id"],
+        is_user_message=True,
         from_agent_type=AgentType.USER,
         from_id=request.user.id,  # Ensure user is authenticated
+        conversation=conversation,
     )
 
     logger.info(
@@ -154,34 +163,32 @@ def _serialize_chat_messages(chat_messages):
 def _process_chat_message(chat_message, request):
     """
     Private method that coordinates:
-      1) Assigning the appropriate workflow element to the chat message
-      2) Generating a response from the LLM agent
-      3) Handling the resulting LLM response (possibly recursively)
+      1) Generating a response from the LLM agent
+      2) Handling the resulting LLM response
     """
+    if not chat_message.is_user_message:
+        logger.error("Chat message is not a user message.")
+        return
+
     logger.info(
         "Processing ChatMessage ID: %s for Document ID: %s",
         chat_message.id,
         chat_message.document.id if chat_message.document else None,
     )
 
-    assignment_engine = ChatAssignment()
-    assignment_engine.assign_workflow_element(chat_message)
-    chat_message.save()
-
     document = chat_message.document
+    document_element = DocumentElement.objects.get(pk=chat_message.to_id)
     chat_messages = _fetch_chat_messages(document)
 
     llm_response = AgentFactory.create_agent(
-        AgentType[chat_message.current_workflow_element.agent.type]
+        AgentType[document_element.agent.type]
     ).process(chat_messages)
 
     logger.debug(
         "LLM response for ChatMessage ID %s: %s", chat_message.id, llm_response
     )
 
-    new_chat_message = _handle_llm_response(
-        llm_response, document, chat_message.current_workflow_element, request
-    )
+    _handle_llm_response(llm_response, document, document_element, request)
 
 
 ####################################################################################################
@@ -191,7 +198,7 @@ def _process_chat_message(chat_message, request):
 def _handle_llm_response(
     llm_response: LLMResponse,
     document: Document,
-    workflow_element: WorkflowElement,
+    document_element: DocumentElement,
     request,
 ):
     """
@@ -199,12 +206,12 @@ def _handle_llm_response(
     creates a new ChatMessage from the agent, and returns the newly-created chat message.
     """
     logger.debug(
-        "Handling LLM response for Document ID: %s, WorkflowElement ID: %s",
+        "Handling LLM response for Document ID: %s, Document Element ID: %s",
         document.id,
-        workflow_element.id,
+        document_element.id,
     )
 
-    updated_content = llm_response["updated_workflow_doc"]
+    updated_content = llm_response["updated_doc_element"]
     logger.info(
         "Updating document version from %d to %d",
         document.latest_version,
@@ -225,7 +232,7 @@ def _handle_llm_response(
     new_version = VersionedDocument.objects.create(
         document=document,
         version=document.latest_version,
-        workflow_elements=previous_version.workflow_elements or {},
+        document_elements=previous_version.document_elements or {},
     )
 
     logger.debug(
@@ -235,7 +242,7 @@ def _handle_llm_response(
     )
 
     # Update the relevant workflow element's content
-    new_version.workflow_elements[workflow_element.id] = updated_content
+    new_version.document_elements[document_element.id] = updated_content
     new_version.save()
     document.save()
 
@@ -243,12 +250,11 @@ def _handle_llm_response(
     chat_message = ChatMessage.objects.create(
         document=document,
         message=llm_response["response_message"],
-        from_agent_type=ChatMessage.AgentTypeChoices.AGENT,
-        from_id=workflow_element.agent.type,
+        from_id=document_element.id,
         to_id=request.user.id,
-        to_agent_type=ChatMessage.AgentTypeChoices.USER,
         current_document=new_version,
-        current_workflow_element=workflow_element,
+        is_user_message=False,
+        raw_response=llm_response.raw_response,
     )
 
     logger.info(
