@@ -32,7 +32,7 @@ class ChatAssignment:
         llm_messages: List[LLMMessage] = []
         workflow_element_prompts = {}
         for workflow_element in workflow_elements:
-            workflow_element_prompts[workflow_element.json_key] = [
+            workflow_element_prompts[workflow_element.id] = [
                 workflow_element.relevancy_checking_prompt
             ]
 
@@ -52,7 +52,7 @@ class ChatAssignment:
         llm_response = self.llm.get_response(llm_messages, response_format)
         assigned_element = int(llm_response["agent_id"])
         for workflow_element in workflow_elements:
-            if workflow_element.json_key == assigned_element:
+            if workflow_element.id == assigned_element:
                 return workflow_element
         raise ValueError("No workflow element found")
 
@@ -89,23 +89,27 @@ class ChatAssignment:
         :param is_user_agent: True if the sender is the user, False otherwise.
         :return: A string containing the relevant content for the LLM.
         """
-        # Retrieve the relevant document (if it exists)
-        if chat.current_document and chat.current_document.workflow_elements and chat.current_workflow_element and chat.current_workflow_element.json_key in chat.current_document.workflow_elements:
-                document_text = chat.current_document.workflow_elements[chat.current_workflow_element.json_key]
-        else:
-            document_text = "No document available."
-
         if is_user_agent:
-            agent_type = chat.to_agent_type
-            return (
-                f"{chat.message}\n\n"
-                f"Based on the document provided below, please propose or update the {agent_type}:\n"
-                f"Document:\n{document_text}"
-            )
-        
-        agent_type = chat.from_agent_type
-        # document_text = chat.current_document.workflow_elements[chat.current_workflow_element.id]
-        return (
-            f"{chat.message}\n\n"
-            f"Updated {agent_type}:\n{document_text}"
-        )
+            if chat.current_document and chat.current_document.workflow_elements:
+                text = chat.current_document.workflow_elements
+            else:
+                text = "{}"
+            
+            return f"""
+                {{
+                    "document": {text},
+                    "user_message": {chat.message}
+                }}
+            """
+        else:
+            if chat.current_document and chat.current_document.workflow_elements and chat.current_workflow_element and chat.current_workflow_element.json_key in chat.current_document.workflow_elements:
+                text = chat.current_document.workflow_elements[chat.current_workflow_element.json_key]
+            else:
+                text = ""
+            
+            return f"""
+                {{
+                    {chat.current_workflow_element.json_key}: {text},
+                    'communication': {chat.message}
+                }}
+            """
