@@ -2,29 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-class Agent(models.Model):
-    """
-    Represents an AI agent that can perform automated tasks,
-    such as generating or analyzing content within a workflow.
-    """
-
-    # If you need a custom primary key as a string, you can uncomment and use the following:
-    # id = models.CharField(max_length=255, primary_key=True)
-
-    # By default, Django will create 'id' as an AutoField primary key if you omit a custom one.
-
-    type = models.CharField(max_length=255)
-    description = models.TextField(null=True, blank=True)
-
-    def __str__(self):
-        return self.type
-
-    class Meta:
-        verbose_name = "Agent"
-        verbose_name_plural = "Agents"
-        ordering = ["type"]
-
-
 class DocumentSchema(models.Model):
     """
     Represents different parts of a document (WorkflowElements) that
@@ -32,6 +9,7 @@ class DocumentSchema(models.Model):
     """
 
     name = models.CharField(max_length=255)
+    type = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
 
     def __str__(self):

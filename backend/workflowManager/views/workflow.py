@@ -180,9 +180,9 @@ def _process_chat_message(chat_message, request):
     document_element = DocumentElement.objects.get(pk=chat_message.to_id)
     chat_messages = _fetch_chat_messages(document)
 
-    llm_response = AgentFactory.create_agent(
-        AgentType[document_element.agent.type]
-    ).process(chat_messages)
+    llm_response = AgentFactory.create_agent(AgentType[document_element.type]).process(
+        chat_messages
+    )
 
     logger.debug(
         "LLM response for ChatMessage ID %s: %s", chat_message.id, llm_response
