@@ -15,7 +15,7 @@ class LLMWrapper:
         Initializes the LLMWrapper with the default AI client and model.
         """
         self.client = ai.Client()
-        self.model = "openai:gpt-4o-2024-08-06"  # "anthropic:claude-3-5-sonnet-20241022" # o1-mini-2024-09-12, o1-2024-12-17, gpt-4o-2024-08-06
+        self.model = "openai:o1-preview-2024-09-12"  # "anthropic:claude-3-5-sonnet-20241022" # o1-mini-2024-09-12, o1-2024-12-17, gpt-4o-2024-08-06, o1-preview-2024-09-12
 
     def get_response(
         self, messages: List[Dict[str, str]], expected_fields: Dict[str, str]
@@ -27,6 +27,7 @@ class LLMWrapper:
         try:
             raw_response = self._get_completion(messages)
 
+            # TODO: handle the case where the model response is not a valid JSON object
             parsed_response = json.loads(raw_response)
             if not all(key in parsed_response for key in expected_fields.values()):
                 raise ValueError("Missing required fields in the model response.")
@@ -50,10 +51,17 @@ class LLMWrapper:
             'content' keys.
         :return: The AI model's response content as a string.
         """
-        response = self.client.chat.completions.create(
-            model=self.model,
-            messages=messages,
-            temperature=0.25,
-            response_format={"type": "json_object"},
-        )
+        if self.model.startswith("openai:o1"):
+            # current o1-preview-2024-09-12 model doesn't support response_format as json_object, o1 models support json_object start from 2024-12-17
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=messages,
+            )
+        else:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=messages,
+                temperature=0.25,
+                response_format={"type": "json_object"},
+            )
         return response.choices[0].message.content
