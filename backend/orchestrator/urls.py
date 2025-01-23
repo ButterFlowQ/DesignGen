@@ -6,7 +6,7 @@ from .views.chat import send_chat_message, get_chat_message
 # Document APIS
 urlpatterns = [
     path("create_document/", create_document, name="create_document"),
-    path("get_document/", get_document, name="get_document"),
+    path("get_document/<document_id>", get_document, name="get_document"),
 ]
 
 # Workflow APIS

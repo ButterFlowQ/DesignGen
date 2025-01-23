@@ -145,19 +145,22 @@ def _serialize_chat_messages(chat_messages):
     Private method that serializes a list of ChatMessage objects into JSON response.
     """
     logger.debug("Serializing %d chat messages.", len(chat_messages))
-    response_data = [
-        {
-            "id": msg.id,
-            "message": msg.message,
-            "from_id": msg.from_id,
-            "to_id": msg.to_id,
-            "current_document": (
-                msg.current_document.id if msg.current_document else None
-            ),
-            "llm_raw_response": msg.llm_raw_response,
-        }
-        for msg in chat_messages
-    ]
+    response_data = {
+        "chat_messages": [
+            {
+                "id": msg.id,
+                "message": msg.message,
+                "from_id": msg.from_id,
+                "to_id": msg.to_id,
+                # "current_document": (
+                #     msg.current_document.id if msg.current_document else None
+                # ),
+                # "llm_raw_response": msg.llm_raw_response,
+            }
+            for msg in chat_messages
+        ],
+        "document": "Hi this is raw html",
+    }
     return JsonResponse(response_data, safe=False)
 
 
