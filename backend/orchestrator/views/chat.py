@@ -147,8 +147,8 @@ def _serialize_chat_messages(chat_messages):
     """
     versioned_document = chat_messages[-1].current_document
     output = json.dumps(versioned_document.document_elements, indent=4)
-    html_generator = HtmlGeneratorAgent()
-    html = html_generator.getHtml(output)["response_message"]
+    # html_generator = HtmlGeneratorAgent()
+    # html = html_generator.process(output)["response_message"]
     response_data = {
         "chat_messages": [
             {
@@ -162,7 +162,7 @@ def _serialize_chat_messages(chat_messages):
         ],
         "conversation_id": chat_messages[-1].conversation.id,
         "document": output,
-        "html_document": html,
+        # "html_document": html,
     }
     return JsonResponse(response_data, safe=False)
 

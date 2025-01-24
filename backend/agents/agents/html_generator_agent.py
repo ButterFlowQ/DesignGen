@@ -1,11 +1,9 @@
-from typing import List
+from agents.types import AgentType, LLMResponse
 
-from agents.types import AgentType, LLMResponse, LLMMessage
-
-from .agent_interface import AgentInterface
+from .simple_agent_interface import SimpleAgentInterface
 
 
-class HtmlGeneratorAgent(AgentInterface):
+class HtmlGeneratorAgent(SimpleAgentInterface):
     """
     An agent responsible for converting a JSON document into an HTML representation.
     """
@@ -36,6 +34,9 @@ class HtmlGeneratorAgent(AgentInterface):
             {
                 "html": "</head><body><p>...</p><p>...</p>"
             }
+
+            Keep the title tag of the document as Software Design Document.
+            Use table tags to display data where appropriate.
         """
 
         # The keys we expect in the model's JSON response
@@ -46,9 +47,9 @@ class HtmlGeneratorAgent(AgentInterface):
             AgentType.HTML_GENERATOR,
             system_message,
             response_format,
-            # "openai:gpt-4o-2024-08-06",
+            "openai:gpt-4o-2024-08-06",
         )
 
-    def getHtml(self, doc):
-        llm_message = LLMMessage(role="user", content=doc)
-        return self.llm.get_response([llm_message], self.response_format)
+    def process(self, message: str) -> LLMResponse:
+        llm_messages = self.generate_llm_history(message)
+        return self.llm.get_response(llm_messages, self.response_format)
