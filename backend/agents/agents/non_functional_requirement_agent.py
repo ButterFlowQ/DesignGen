@@ -68,7 +68,7 @@ class NonFunctionalRequirementAgent(AgentInterface):
             If the user message does not require any changes to the non-functional requirements,
             return the same non-functional requirements as the current state.
 
-            If the user message is not clear, ask clarifying questions.
+            If the user message is not clear, ask clarifying questions in the communication field.
         """
 
         response_format = {

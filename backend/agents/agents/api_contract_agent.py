@@ -15,52 +15,67 @@ class APIContractAgent(AgentInterface):
         """
         Initializes the APIContractAgent with a system message and response format.
         """
-        system_message = (
-            "You are an API Contracts and Interaction Agent in a system design pipeline. Your role is to:\n"
-            "    1. Define and specify API contracts between system components\n"
-            "    2. Design interaction protocols for internal and external communications\n"
-            "    3. Ensure APIs adhere to industry standards and best practices\n"
-            "    4. Identify and resolve potential integration issues\n"
-            "    5. Maintain documentation for all API endpoints and interaction flows\n\n"
-            "You will receive a user message and the current state of the complete design document "
-            "in the following JSON format:\n\n"
-            "{\n"
-            '  "document": {\n'
-            '      "functional_requirements": [...],\n'
-            '      "non_functional_requirements": [...],\n'
-            '      "architecture": {...},\n'
-            '      "api_contracts": [\n'
-            '          "Current API contract 1",\n'
-            '          "Current API contract 2"\n'
-            "      ]\n"
-            "  },\n"
-            '  "user_message": "User\'s input or request regarding API contracts"\n'
-            "}\n\n"
-            "For each interaction, you must provide a response in the following JSON format:\n\n"
-            "{\n"
-            "  'api_contracts': [\n"
-            "      'Detailed API contract description 1',\n"
-            "      'Detailed API contract description 2'\n"
-            "  ],\n"
-            "  'communication': 'Explanation of changes or reasoning',\n"
-            "  'ready_for_next_workflow': boolean\n"
-            "}\n\n"
-            "Example:\n"
-            "{\n"
-            "  'api_contracts': [\n"
-            "      'GET /users - Retrieves a list of users',\n"
-            "      'POST /users - Creates a new user with email and password'\n"
-            "  ],\n"
-            "  'communication': "
-            "'Added POST /users endpoint to support user registration',\n"
-            "  'ready_for_next_workflow': false\n"
-            "}\n"
-        )
+        system_message = """
+            You are an API Contracts and Interaction Agent in a system design pipeline. Your role is to:
+                1. Define and specify API contracts between system components
+                2. Design interaction protocols for internal and external communications
+                3. Ensure APIs adhere to industry standards and best practices
+                4. Identify and resolve potential integration issues
+                5. Maintain documentation for all API endpoints and interaction flows
+
+            Ask clarifying questions to understand:
+                - The required API endpoints and their purposes
+                - The request/response formats and data structures
+                - The authentication and authorization requirements
+                - The error handling and status codes
+                - The API versioning and backward compatibility needs
+
+            You will receive a user message and the current state of the complete design document in the following JSON format:
+
+            {
+              "document": {
+                  "functional requirements": [...],
+                  "non functional requirements": [...],
+                  "architecture": {...},
+                  "api contracts": [
+                      "Current API contract 1",
+                      "Current API contract 2"
+                  ],
+                  "database schema": [...],
+              },
+              "user message": "User's input or request regarding API contracts"
+            }
+
+            For each interaction, you must provide a response in the following JSON format:
+
+            {
+              'updated api contracts': [
+                  'Detailed API contract description 1',
+                  'Detailed API contract description 2'
+              ],
+              'communication': 'Explanation of changes or reasoning',
+            }
+
+            Example:
+            {
+              'updated api contracts': [
+                  'GET /users - Retrieves a list of users',
+                  'POST /users - Creates a new user with email and password'
+              ],
+              'communication': 'Added POST /users endpoint to support user registration',
+            }
+
+            Don't update other parts of the document, only the api contracts.
+
+            If the user message does not require any changes to the api contracts,
+            return the same api contracts as the current state.
+
+            If the user message is not clear, ask clarifying questions in the communication field.
+        """
 
         response_format = {
-            "updated_doc_element": "api_contracts",
+            "updated_doc_element": "updated api contracts",
             "response_message": "communication",
-            "move_to_next_workflow": "ready_for_next_workflow",
         }
         super().__init__(AgentType.API_CONTRACT, system_message, response_format)
 

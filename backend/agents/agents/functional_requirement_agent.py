@@ -70,7 +70,7 @@ class FunctionalRequirementAgent(AgentInterface):
             If the user message does not require any changes to the functional requirements,
             return the same functional requirements as the current state.
 
-            If the user message is not clear, ask clarifying questions.
+            If the user message is not clear, ask clarifying questions in the communication field.
         """
 
         # The keys we expect in the model's JSON response
