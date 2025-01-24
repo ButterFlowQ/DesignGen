@@ -94,6 +94,13 @@ function DocumentView() {
     }
   };
 
+  const resetConversation = () => {
+    setDocData({
+      document: docData.document,
+      chat_messages: [],
+    });
+  };
+
   if (loading) {
     return <div style={styles.loading}>Loading...</div>;
   }
@@ -128,7 +135,25 @@ function DocumentView() {
         {/* Chat panel */}
         <div style={styles.chatSection}>
           <div style={styles.chatPanel}>
-            <h2>Chat Messages</h2>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                flexWrap: "wrap",
+                alignItems: "center",
+                gap: 10,
+                // justifyContent: "center",
+              }}
+            >
+              <h2>Chat Messages</h2>
+              <button
+                onClick={resetConversation}
+                style={{ ...styles.sendButton, maxHeight: "50%" }}
+              >
+                {" "}
+                New Conversation
+              </button>
+            </div>
             {chat_messages.map((msg, index) => (
               <div style={{ width: "100%", marginTop: "10px" }}>
                 <MessageBox
