@@ -52,7 +52,7 @@ def send_chat_message(request):
         return error_response
 
     chat_message = _build_send_chat_message_response(data, request)
-    _process_chat_message(chat_message, request)
+    reply_chat_message = _process_chat_message(chat_message, request)
 
     logger.info(
         "Successfully processed chat message with ID: %s for document ID: %s",
@@ -60,9 +60,7 @@ def send_chat_message(request):
         chat_message.document.id if chat_message.document else None,
     )
 
-    return _serialize_chat_messages(
-        _fetch_chat_messages(chat_message.document, chat_message.conversation)
-    )
+    return _serialize_chat_messages([chat_message, reply_chat_message])
 
 
 @csrf_exempt
@@ -105,6 +103,8 @@ def _build_send_chat_message_response(data, request):
         conversation = get_object_or_404(Conversation, pk=data["conversation_id"])
     else:
         conversation = Conversation.objects.create(document=document)
+        document.current_conversation = conversation
+        document.save()
 
     chat_message = ChatMessage.objects.create(
         message=data["message"],
@@ -144,7 +144,8 @@ def _serialize_chat_messages(chat_messages):
     """
     Private method that serializes a list of ChatMessage objects into JSON response.
     """
-    logger.debug("Serializing %d chat messages.", len(chat_messages))
+    versioned_document = chat_messages[-1].current_document
+    output = json.dumps(versioned_document.document_elements, indent=4)
     response_data = {
         "chat_messages": [
             {
@@ -152,14 +153,12 @@ def _serialize_chat_messages(chat_messages):
                 "message": msg.message,
                 "from_id": msg.from_id,
                 "to_id": msg.to_id,
-                # "current_document": (
-                #     msg.current_document.id if msg.current_document else None
-                # ),
-                # "llm_raw_response": msg.llm_raw_response,
+                "is_user_message": msg.is_user_message,
             }
             for msg in chat_messages
         ],
-        "document": "Hi this is raw html",
+        "conversation_id": chat_messages[-1].conversation.id,
+        "document": output,
     }
     return JsonResponse(response_data, safe=False)
 
@@ -175,7 +174,7 @@ def _process_chat_message(chat_message, request):
     """
     if not chat_message.is_user_message:
         logger.error("Chat message is not a user message.")
-        return
+        return None
 
     logger.info(
         "Processing ChatMessage ID: %s for Document ID: %s",
@@ -196,7 +195,7 @@ def _process_chat_message(chat_message, request):
         "LLM response for ChatMessage ID %s: %s", chat_message.id, llm_response
     )
 
-    _handle_llm_response(
+    return _handle_llm_response(
         llm_response, document, document_element, request, conversation
     )
 
