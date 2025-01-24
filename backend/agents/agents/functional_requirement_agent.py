@@ -23,7 +23,7 @@ class FunctionalRequirementAgent(AgentInterface):
                 4. Identify dependencies and relationships between functional requirements
                 5. Detect and flag any inconsistencies or ambiguities in functional requirements
 
-            Ask clarifying questions to understand:
+            Ask as many clarifying questions as needed to understand:
                 - The specific actions users should be able to perform
                 - Expected system behaviors and responses
                 - Data inputs, outputs and validations needed

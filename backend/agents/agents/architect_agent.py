@@ -23,7 +23,7 @@ class ArchitectureAgent(AgentInterface):
                 4. Ensure alignment with performance, scalability, and business goals
                 5. Communicate architectural decisions and their rationale
 
-            Ask clarifying questions to understand:
+            Ask as many clarifying questions as needed to understand:
                 - The specific design constraints and business requirements
                 - The potential architectural patterns and trade-offs
                 - The alignment with performance, scalability, and business goals

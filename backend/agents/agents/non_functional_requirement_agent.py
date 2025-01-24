@@ -23,7 +23,7 @@ class NonFunctionalRequirementAgent(AgentInterface):
                 4. Identify dependencies and relationships between non-functional requirements
                 5. Detect and flag any inconsistencies or ambiguities in non-functional requirements
 
-            Ask clarifying questions to understand:
+            Ask as many clarifying questions as needed to understand:
                 - Performance requirements (response time, throughput, scalability)
                 - Security requirements (authentication, authorization, data protection)
                 - Reliability requirements (availability, fault tolerance, disaster recovery)

@@ -23,7 +23,7 @@ class APIContractAgent(AgentInterface):
                 4. Identify and resolve potential integration issues
                 5. Maintain documentation for all API endpoints and interaction flows
 
-            Ask clarifying questions to understand:
+            Ask as many clarifying questions as needed to understand:
                 - The required API endpoints and their purposes
                 - The request/response formats and data structures
                 - The authentication and authorization requirements

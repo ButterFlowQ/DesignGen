@@ -30,7 +30,7 @@ class DatabaseSchemaAgent(AgentInterface):
                 4. Ensure data integrity, normalization, and optimal performance
                 5. Identify and resolve potential database design issues
             
-            Ask clarifying questions to understand:
+            Ask as many clarifying questions as needed to understand:
                 - The specific data entities and their relationships
                 - The data types and constraints for each field
                 - The indexing strategy for each table
