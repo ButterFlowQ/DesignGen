@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.db import transaction
 
 from agents.agent_factory import AgentFactory
+# from agents.agents.html_generator_agent import HtmlGeneratorAgent
 from agents.types import AgentType, LLMResponse
 
 from ..models.models import (
@@ -146,6 +147,8 @@ def _serialize_chat_messages(chat_messages):
     """
     versioned_document = chat_messages[-1].current_document
     output = json.dumps(versioned_document.document_elements, indent=4)
+    # html_generator = HtmlGeneratorAgent()
+    # html = html_generator.process(output)["response_message"]
     response_data = {
         "chat_messages": [
             {
@@ -159,6 +162,7 @@ def _serialize_chat_messages(chat_messages):
         ],
         "conversation_id": chat_messages[-1].conversation.id,
         "document": output,
+        # "html_document": html,
     }
     return JsonResponse(response_data, safe=False)
 

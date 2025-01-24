@@ -84,6 +84,7 @@ function DocumentView() {
       setDocData({
         ...docData,
         document: result.document,
+        html_document: result.html_document,
         conversation_id: result.conversation_id,
         chat_messages: [...docData.chat_messages, ...result.chat_messages],
       });
@@ -97,6 +98,7 @@ function DocumentView() {
   const resetConversation = () => {
     setDocData({
       document: docData.document,
+      html_document: docData.html_document,
       chat_messages: [],
     });
   };
@@ -109,7 +111,7 @@ function DocumentView() {
     return <div style={styles.error}>Error: No document data found.</div>;
   }
 
-  const { chat_messages, document } = docData;
+  const { chat_messages, document, html_document } = docData;
 
   return (
     <div style={styles.pageContainer}>
@@ -124,12 +126,13 @@ function DocumentView() {
         {/* Document panel */}
         <div style={styles.docPanel}>
           {/* If it's HTML, you can render with dangerouslySetInnerHTML */}
+          <div dangerouslySetInnerHTML={{ __html: html_document }} />
+
           <JsonView
             data={JSON.parse(document)}
             shouldExpandNode={allExpanded}
             style={darkStyles}
           />
-          {/* <div dangerouslySetInnerHTML={{ __html: document }} /> */}
         </div>
 
         {/* Chat panel */}
@@ -148,7 +151,11 @@ function DocumentView() {
               <h2>Chat Messages</h2>
               <button
                 onClick={resetConversation}
-                style={{ ...styles.sendButton, maxHeight: "50%", marginLeft: "auto" }}
+                style={{
+                  ...styles.sendButton,
+                  maxHeight: "50%",
+                  marginLeft: "auto",
+                }}
               >
                 {" "}
                 New Conversation
