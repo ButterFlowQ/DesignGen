@@ -160,6 +160,7 @@ def _serialize_chat_messages(chat_messages, versioned_document=None):
                 "from_id": msg.from_id,
                 "to_id": msg.to_id,
                 "is_user_message": msg.is_user_message,
+                "creation_time": msg.creation_time,
             }
             for msg in chat_messages
         ],
