@@ -1,8 +1,12 @@
 import json
 from typing import List, Dict
+import logging
 
 import aisuite as ai
 from .types import LLMResponse
+
+# Create a logger for this module.
+logger = logging.getLogger(__name__)
 
 
 class LLMWrapper:
@@ -26,6 +30,7 @@ class LLMWrapper:
 
         try:
             raw_response = self._get_completion(messages)
+            logger.info(raw_response)
 
             # TODO: handle the case where the model response is not a valid JSON object
             parsed_response = json.loads(raw_response)
