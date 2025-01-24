@@ -6,6 +6,9 @@ import {
   darkStyles,
   // defaultStyles,
 } from "react-json-view-lite";
+import "react-chat-elements/dist/main.css";
+import { MessageBox } from "react-chat-elements";
+import logo from "./logo.png"; // Make sure the path is correct
 
 /**
  * A component that fetches and displays:
@@ -16,6 +19,7 @@ function DocumentView() {
   const { documentId } = useParams();
   const [docData, setDocData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [messageSending, setMessageSending] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const [toId, setToId] = useState(""); // State to hold the selected recipient ID
 
@@ -52,7 +56,9 @@ function DocumentView() {
   }, [documentId]);
 
   const sendMessage = async () => {
+    setMessageSending(true);
     try {
+      console.log(docData);
       const response = await fetch(
         `http://127.0.0.1:8000/orchestrator/send_chat_message/`,
         {
@@ -65,11 +71,12 @@ function DocumentView() {
             from_id: "1",
             to_id: toId,
             document_id: documentId,
-            conversation_id: docData.current_conversation_id,
+            conversation_id: docData.conversation_id,
           }),
           mode: "cors",
         }
       );
+      setMessageSending(false);
       if (!response.ok) {
         throw new Error("Failed to send message");
       }
@@ -77,6 +84,7 @@ function DocumentView() {
       setDocData({
         ...docData,
         document: result.document,
+        conversation_id: result.conversation_id,
         chat_messages: [...docData.chat_messages, ...result.chat_messages],
       });
       setNewMessage(""); // Clear input after sending
@@ -87,64 +95,83 @@ function DocumentView() {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div style={styles.loading}>Loading...</div>;
   }
 
   if (!docData) {
-    return <div>Error: No document data found.</div>;
+    return <div style={styles.error}>Error: No document data found.</div>;
   }
 
   const { chat_messages, document } = docData;
 
   return (
-    <div style={styles.container}>
-      {/* Document panel */}
-      <div style={styles.docPanel}>
-        {/* If it's HTML, you can render with dangerouslySetInnerHTML */}
-        <JsonView
-          data={JSON.parse(document)}
-          shouldExpandNode={allExpanded}
-          style={darkStyles}
-        />
-        {/* <div dangerouslySetInnerHTML={{ __html: document }} /> */}
-      </div>
+    <div style={styles.pageContainer}>
+      {/* Navbar */}
+      <nav style={styles.navbar}>
+        <img src={logo} alt="Logo" style={styles.logo} />
+        {/* You can add more navigation items here */}
+      </nav>
 
-      {/* Chat panel */}
-      <div style={styles.chatPanel}>
-        <h2>Chat Messages</h2>
-        {chat_messages.map((msg) => (
-          <div key={msg.id} style={styles.chatMessage}>
-            <p>
-              <strong>
-                From: {msg.from_id} &rarr; To: {msg.to_id}
-              </strong>
-            </p>
-            <p>{msg.message}</p>
-          </div>
-        ))}
-        <div>
-          <input
-            type="text"
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            placeholder="Type your message here..."
-            style={{ width: "50%", marginRight: "10px" }}
+      {/* Main Content */}
+      <div style={styles.container}>
+        {/* Document panel */}
+        <div style={styles.docPanel}>
+          {/* If it's HTML, you can render with dangerouslySetInnerHTML */}
+          <JsonView
+            data={JSON.parse(document)}
+            shouldExpandNode={allExpanded}
+            style={darkStyles}
           />
-          <select
-            value={toId}
-            onChange={(e) => setToId(e.target.value)}
-            style={{ width: "20%", marginRight: "10px" }}
-          >
-            <option value="">Select Recipient</option>
-            {recipients.map((recipient) => (
-              <option key={recipient.id} value={recipient.id}>
-                {recipient.name}
-              </option>
+          {/* <div dangerouslySetInnerHTML={{ __html: document }} /> */}
+        </div>
+
+        {/* Chat panel */}
+        <div style={styles.chatSection}>
+          <div style={styles.chatPanel}>
+            <h2>Chat Messages</h2>
+            {chat_messages.map((msg, index) => (
+              <div style={{ width: "100%", marginTop: "10px" }}>
+                <MessageBox
+                  key={index}
+                  position={msg.is_user_message ? "right" : "left"}
+                  type={"text"}
+                  title={msg.is_user_message ? "You" : "Bot"}
+                  text={msg.message}
+                />
+              </div>
             ))}
-          </select>
-          <button onClick={sendMessage} style={{ width: "20%" }}>
-            Send
-          </button>
+          </div>
+          <div style={styles.messageInputContainer}>
+            <input
+              type="text"
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder="Type your message here..."
+              style={styles.messageInput}
+            />
+            <select
+              value={toId}
+              onChange={(e) => setToId(e.target.value)}
+              style={styles.recipientSelect}
+            >
+              <option value="">Select Recipient</option>
+              {recipients.map((recipient) => (
+                <option key={recipient.id} value={recipient.id}>
+                  {recipient.name}
+                </option>
+              ))}
+            </select>
+            <button
+              onClick={sendMessage}
+              style={{
+                ...styles.sendButton,
+                backgroundColor: messageSending ? "#ccc" : "#007bff",
+              }}
+              disabled={messageSending}
+            >
+              Send
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -152,27 +179,96 @@ function DocumentView() {
 }
 
 const styles = {
+  pageContainer: {
+    display: "flex",
+    flexDirection: "column",
+    width: "100vw",
+    height: "100vh",
+    fontFamily: "Arial, sans-serif",
+  },
+  navbar: {
+    height: "60px",
+    backgroundColor: "#282c34",
+    display: "flex",
+    alignItems: "center",
+    padding: "0 20px",
+    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+    flexShrink: 0,
+  },
+  logo: {
+    height: "40px",
+  },
   container: {
     display: "flex",
     flexDirection: "row",
-    width: "100vw",
-    height: "100vh",
+    flex: 1,
+    overflow: "hidden",
   },
   docPanel: {
     flex: 2,
     borderRight: "1px solid #ccc",
     padding: "1rem",
     overflowY: "auto",
+    backgroundColor: "#f9f9f9",
   },
   chatPanel: {
     flex: 1,
     padding: "1rem",
-    overflowY: "auto",
+    overflowY: "scroll",
+    display: "flex",
+    flexDirection: "column",
+    backgroundColor: "#ffffff",
+    maxHeight: "100%",
   },
-  chatMessage: {
-    marginBottom: "1rem",
+  chatSection: {
+    flex: 1,
+    padding: "1rem",
+    display: "flex",
+    maxHeight: "100%",
+    flexDirection: "column",
+    backgroundColor: "#ffffff",
+  },
+  messageInputContainer: {
+    marginTop: "auto",
+    display: "flex",
+    alignItems: "center",
+  },
+  messageInput: {
+    flex: 1,
     padding: "0.5rem",
-    borderBottom: "1px solid #eee",
+    marginRight: "10px",
+    border: "1px solid #ccc",
+    borderRadius: "4px",
+  },
+  recipientSelect: {
+    width: "30%",
+    padding: "0.5rem",
+    marginRight: "10px",
+    border: "1px solid #ccc",
+    borderRadius: "4px",
+  },
+  sendButton: {
+    padding: "0.5rem 1rem",
+    backgroundColor: "#007bff",
+    color: "#fff",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer",
+  },
+  loading: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100vh",
+    fontSize: "1.5rem",
+  },
+  error: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100vh",
+    color: "red",
+    fontSize: "1.5rem",
   },
 };
 
