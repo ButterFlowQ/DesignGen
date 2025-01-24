@@ -9,6 +9,7 @@ import {
 import "react-chat-elements/dist/main.css";
 import { MessageBox } from "react-chat-elements";
 import logo from "./logo.png"; // Make sure the path is correct
+import Markdown from "react-markdown";
 
 /**
  * A component that fetches and displays:
@@ -167,14 +168,18 @@ function DocumentView() {
                   key={index}
                   position={msg.is_user_message ? "right" : "left"}
                   type={"text"}
-                  title={msg.is_user_message ? "You" : "Bot"}
-                  text={msg.message}
+                  title={
+                    msg.is_user_message
+                      ? "You"
+                      : recipients[msg.from_id - 1].name + " Bot"
+                  }
+                  text={<Markdown>{msg.message}</Markdown>}
                 />
               </div>
             ))}
           </div>
           <div style={styles.messageInputContainer}>
-            <input
+            <textarea
               type="text"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}

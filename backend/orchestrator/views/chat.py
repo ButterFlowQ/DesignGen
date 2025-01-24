@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.db import transaction
 
 from agents.agent_factory import AgentFactory
+
 # from agents.agents.html_generator_agent import HtmlGeneratorAgent
 from agents.types import AgentType, LLMResponse
 
@@ -100,7 +101,7 @@ def _build_send_chat_message_response(data, request):
     logger.debug("Building chat message from request data.")
     document = get_object_or_404(Document, pk=data["document_id"])
     new_version = VersionedDocument.objects.filter(document=document).latest("version")
-    if "conversation_id" in data:
+    if "conversation_id" in data and data["conversation_id"] is not None:
         conversation = get_object_or_404(Conversation, pk=data["conversation_id"])
     else:
         conversation = Conversation.objects.create(document=document)
@@ -141,12 +142,14 @@ def _fetch_chat_messages(document, conversation=None):
 ####################################################################################################
 
 
-def _serialize_chat_messages(chat_messages):
+def _serialize_chat_messages(chat_messages, versioned_document=None):
     """
     Private method that serializes a list of ChatMessage objects into JSON response.
     """
-    versioned_document = chat_messages[-1].current_document
+    if versioned_document is None:
+        versioned_document = chat_messages[-1].current_document
     output = json.dumps(versioned_document.document_elements, indent=4)
+
     # html_generator = HtmlGeneratorAgent()
     # html = html_generator.process(output)["response_message"]
     response_data = {
@@ -160,7 +163,9 @@ def _serialize_chat_messages(chat_messages):
             }
             for msg in chat_messages
         ],
-        "conversation_id": chat_messages[-1].conversation.id,
+        "conversation_id": (
+            chat_messages[-1].conversation.id if len(chat_messages) > 0 else None
+        ),
         "document": output,
         # "html_document": html,
     }

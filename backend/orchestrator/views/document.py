@@ -127,21 +127,9 @@ def get_document(request, document_id):
         )
         return JsonResponse({"error": "No versioned document found"}, status=404)
 
-    # response = {
-    #     "id": document.id,
-    #     "document_schema": (
-    #         document.document_schema.id if document.document_schema else None
-    #     ),
-    #     "owner": document.owner.id if document.owner else None,
-    #     "latest_version": document.latest_version,
-    #     "title": versioned_document.title,
-    #     "version": versioned_document.version,
-    #     "document_elements": versioned_document.document_elements,
-    # }
-
     conversation = document.current_conversation
     chat_messages = _fetch_chat_messages(document, conversation)
-    return _serialize_chat_messages(chat_messages)
+    return _serialize_chat_messages(chat_messages, versioned_document)
 
 
 ####################################################################################################
