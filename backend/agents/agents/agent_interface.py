@@ -13,11 +13,15 @@ class AgentInterface:
         agent_type: AgentType,
         system_message: str,
         response_format: list[str],
+        model: str = None,
     ) -> None:
         self.system_message = system_message
         self.agent_type = agent_type
         self.response_format = response_format
-        self.llm = LLMWrapper()
+        if model:
+            self.llm = LLMWrapper(model)
+        else:
+            self.llm = LLMWrapper()
 
     def process(
         self,

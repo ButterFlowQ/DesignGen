@@ -13,6 +13,7 @@ class AgentType(str, Enum):
     ARCHITECTURE = auto()
     API_CONTRACT = auto()
     DATABASE_SCHEMA = auto()
+    HTML_GENERATOR = auto()
 
 
 class LLMMessage(TypedDict):
