@@ -31,6 +31,8 @@ class LLMWrapper:
         try:
             raw_response = self._get_completion(messages)
             logger.info(raw_response)
+            # print to be removed after logging works properly
+            print(raw_response)
 
             # TODO: handle the case where the model response is not a valid JSON object
             parsed_response = json.loads(raw_response)

@@ -56,20 +56,20 @@ class DatabaseSchemaAgent(AgentInterface):
             For each interaction, you must provide a response in the following JSON format:
 
             {
-                'updated database schema': [
-                    'Detailed database schema description 1',
-                    'Detailed database schema description 2'
+                "updated database schema": [
+                    "Detailed database schema description 1",
+                    "Detailed database schema description 2"
                 ],
-                'communication': 'Explanation of changes or reasoning',
+                "communication": "Explanation of changes or reasoning",
             }
 
             Example:
             {
-                'updated database schema': [
-                    'Table: Users - id (PK), email, password, created_at',
-                    'Table: Orders - id (PK), user_id (FK), product_id (FK), quantity, total_price'
+                "updated database schema": [
+                    "Table: Users - id (PK), email, password, created_at",
+                    "Table: Orders - id (PK), user_id (FK), product_id (FK), quantity, total_price"
                 ],
-                'communication': 'Added Orders table to track user purchases and link to Users table',
+                "communication": "Added Orders table to track user purchases and link to Users table",
             }
 
             Don't update other parts of the document, only the database schema.

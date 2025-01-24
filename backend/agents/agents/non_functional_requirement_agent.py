@@ -48,19 +48,19 @@ class NonFunctionalRequirementAgent(AgentInterface):
             }
             For each interaction, you must provide a response in the following JSON format:
             {
-                'updated non functional requirements': [
-                    'Detailed non-functional requirement description 1',
-                    'Detailed non-functional requirement description 2'
+                "updated non functional requirements": [
+                    "Detailed non-functional requirement description 1",
+                    "Detailed non-functional requirement description 2"
                 ],
-                'communication': 'Explanation of changes or reasoning',
+                "communication": "Explanation of changes or reasoning",
             }
             Example:
             {
-                'updated non functional requirements': [
-                    'System must handle 10,000 concurrent users',
-                    'System must ensure data encryption in transit and at rest'
+                "updated non functional requirements": [
+                    "System must handle 10,000 concurrent users",
+                    "System must ensure data encryption in transit and at rest"
                 ],
-                'communication': 'Updated concurrency requirement to 10,000 users based on projected growth',
+                "communication": "Updated concurrency requirement to 10,000 users based on projected growth",
             }
 
             Don't update other parts of the document, only the non-functional requirements.

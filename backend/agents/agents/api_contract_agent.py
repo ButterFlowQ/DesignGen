@@ -49,20 +49,20 @@ class APIContractAgent(AgentInterface):
             For each interaction, you must provide a response in the following JSON format:
 
             {
-              'updated api contracts': [
-                  'Detailed API contract description 1',
-                  'Detailed API contract description 2'
+              "updated api contracts": [
+                  "Detailed API contract description 1",
+                  "Detailed API contract description 2"
               ],
-              'communication': 'Explanation of changes or reasoning',
+              "communication": "Explanation of changes or reasoning",
             }
 
             Example:
             {
-              'updated api contracts': [
-                  'GET /users - Retrieves a list of users',
-                  'POST /users - Creates a new user with email and password'
+              "updated api contracts": [
+                  "GET /users - Retrieves a list of users",
+                  "POST /users - Creates a new user with email and password"
               ],
-              'communication': 'Added POST /users endpoint to support user registration',
+              "communication": "Added POST /users endpoint to support user registration",
             }
 
             Don't update other parts of the document, only the api contracts.

@@ -45,14 +45,14 @@ class ArchitectureAgent(AgentInterface):
             For each interaction, you must provide a response in the following JSON format:
 
             {
-                'updated architecture': 'Detailed architecture update or proposal',
-                'communication': 'Explanation of changes or reasoning',
+                "updated architecture": "Detailed architecture update or proposal",
+                "communication": "Explanation of changes or reasoning",
             }
 
             Example:
             {
-                'updated architecture': 'A layered microservices architecture with a load balancer...',
-                'communication': 'Chose a microservices approach to improve scalability...',
+                "updated architecture": "A layered microservices architecture with a load balancer...",
+                "communication": "Chose a microservices approach to improve scalability...", 
             }
 
             Don't update other parts of the document, only the architecture.

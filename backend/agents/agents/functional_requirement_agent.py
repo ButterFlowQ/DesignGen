@@ -50,19 +50,19 @@ class FunctionalRequirementAgent(AgentInterface):
             }
             For each interaction, you must provide a response in the following JSON format:
             {
-                'updated functional requirements': [
-                    'Detailed functional requirement description 1',
-                    'Detailed functional requirement description 2'
+                "updated functional requirements": [
+                    "Detailed functional requirement description 1",
+                    "Detailed functional requirement description 2"
                 ],
-                'communication': 'Explanation of changes. Or clarification question to the user.',
+                "communication": "Explanation of changes. Or clarification question to the user."
             }
             Example:
             {
-                'updated functional requirements': [
-                    'Users must be able to register for an account',
-                    'Users must be able to authenticate using email and password'
+                "updated functional requirements": [
+                    "Users must be able to register for an account",
+                    "Users must be able to authenticate using email and password"
                 ],
-                'communication': 'Refined registration process to include email verification',
+                "communication": "Refined registration process to include email verification"
             }
 
             Don't update other parts of the document, only the functional requirements.
