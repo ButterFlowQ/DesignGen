@@ -23,6 +23,8 @@ function DocumentView() {
   const [messageSending, setMessageSending] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const [toId, setToId] = useState(""); // State to hold the selected recipient ID
+  const [history, setHistory] = useState([]);
+  const [redoStack, setRedoStack] = useState([]);
 
   // Simulated recipient list (replace with actual data fetching if needed)
   const recipients = [
@@ -82,6 +84,7 @@ function DocumentView() {
         throw new Error("Failed to send message");
       }
       const result = await response.json();
+      setHistory([...history, docData]); // Save current state to history
       setDocData({
         ...docData,
         document: result.document,
@@ -97,11 +100,30 @@ function DocumentView() {
   };
 
   const resetConversation = () => {
+    setHistory([...history, docData]); // Save current state to history
     setDocData({
       document: docData.document,
       html_document: docData.html_document,
       chat_messages: [],
     });
+  };
+
+  const undo = () => {
+    if (history.length > 0) {
+      const previousState = history.pop();
+      setRedoStack([...redoStack, docData]); // Save current state to redo stack
+      setDocData(previousState);
+      setHistory(history);
+    }
+  };
+
+  const redo = () => {
+    if (redoStack.length > 0) {
+      const nextState = redoStack.pop();
+      setHistory([...history, docData]); // Save current state to history
+      setDocData(nextState);
+      setRedoStack(redoStack);
+    }
   };
 
   if (loading) {
@@ -119,7 +141,22 @@ function DocumentView() {
       {/* Navbar */}
       <nav style={styles.navbar}>
         <img src={logo} alt="Logo" style={styles.logo} />
-        {/* You can add more navigation items here */}
+        <div style={styles.navButtonsContainer}>
+          <button
+            onClick={undo}
+            style={styles.navButton}
+            disabled={history.length === 0}
+          >
+            Undo
+          </button>
+          <button
+            onClick={redo}
+            style={styles.navButton}
+            disabled={redoStack.length === 0}
+          >
+            Redo
+          </button>
+        </div>
       </nav>
 
       {/* Main Content */}
@@ -174,6 +211,7 @@ function DocumentView() {
                       : recipients[msg.from_id - 1].name + " Bot"
                   }
                   text={<Markdown>{msg.message}</Markdown>}
+                  date={new Date(msg.creation_time)}
                 />
               </div>
             ))}
@@ -234,6 +272,19 @@ const styles = {
   },
   logo: {
     height: "40px",
+  },
+  navButtonsContainer: {
+    marginLeft: "auto",
+    display: "flex",
+    gap: "10px",
+  },
+  navButton: {
+    padding: "0.5rem 1rem",
+    backgroundColor: "#007bff",
+    color: "#fff",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer",
   },
   container: {
     display: "flex",
