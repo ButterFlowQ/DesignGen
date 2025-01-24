@@ -42,6 +42,19 @@ class DocumentElement(models.Model):
         ordering = ["document_schema", "position"]
 
 
+class Conversation(models.Model):
+    """
+    Represents a conversation between a user and the agent.
+    """
+
+    document = models.ForeignKey("Document", on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = "Conversation"
+        verbose_name_plural = "Conversations"
+        ordering = ["document"]
+
+
 class Document(models.Model):
     """
     Represents a document that follows a defined workflow
@@ -49,6 +62,13 @@ class Document(models.Model):
     """
 
     latest_version = models.IntegerField(default=1)
+    current_conversation = models.ForeignKey(
+        Conversation,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="current_document",
+    )
     document_schema = models.ForeignKey(DocumentSchema, on_delete=models.CASCADE)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -80,22 +100,6 @@ class VersionedDocument(models.Model):
         verbose_name = "Versioned document"
         verbose_name_plural = "Versioned documents"
         ordering = ["document", "-version"]
-
-
-class Conversation(models.Model):
-    """
-    Represents a conversation between a user and the agent.
-    """
-
-    document = models.ForeignKey(Document, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"Conversation #{self.pk} for document #{self.document.pk}"
-
-    class Meta:
-        verbose_name = "Conversation"
-        verbose_name_plural = "Conversations"
-        ordering = ["document"]
 
 
 class ChatMessage(models.Model):

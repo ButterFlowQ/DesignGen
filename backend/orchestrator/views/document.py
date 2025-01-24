@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 
 from ..models.models import Document, DocumentSchema, VersionedDocument
+from ..views.chat import _serialize_chat_messages, _fetch_chat_messages
 
 logger = logging.getLogger(__name__)
 
@@ -77,7 +78,7 @@ def create_document(request):
 
 
 @csrf_exempt
-@login_required
+# @login_required
 def get_document(request, document_id):
     """
     Retrieves a Document by its ID, returning its latest version info.
@@ -126,18 +127,21 @@ def get_document(request, document_id):
         )
         return JsonResponse({"error": "No versioned document found"}, status=404)
 
-    response = {
-        "id": document.id,
-        "document_schema": document.document_schema.id if document.document_schema else None,
-        "owner": document.owner.id if document.owner else None,
-        "latest_version": document.latest_version,
-        "title": versioned_document.title,
-        "version": versioned_document.version,
-        "document_elements": versioned_document.document_elements,
-    }
+    # response = {
+    #     "id": document.id,
+    #     "document_schema": (
+    #         document.document_schema.id if document.document_schema else None
+    #     ),
+    #     "owner": document.owner.id if document.owner else None,
+    #     "latest_version": document.latest_version,
+    #     "title": versioned_document.title,
+    #     "version": versioned_document.version,
+    #     "document_elements": versioned_document.document_elements,
+    # }
 
-    logger.info("Successfully retrieved Document (ID=%s).", document.id)
-    return JsonResponse(response, status=200)
+    conversation = document.current_conversation
+    chat_messages = _fetch_chat_messages(document, conversation)
+    return _serialize_chat_messages(chat_messages)
 
 
 ####################################################################################################
@@ -188,13 +192,13 @@ def _validate_get_document_request_data(document_id: int, user):
         return JsonResponse({"error": "Document not found"}, status=404)
 
     # Check permissions
-    if not _user_can_access_document(user, document):
-        logger.warning(
-            "User %s attempted to access Document ID %s without permission.",
-            user.username,
-            document.id,
-        )
-        return JsonResponse({"error": "Permission denied"}, status=403), None
+    # if not _user_can_access_document(user, document):
+    #     logger.warning(
+    #         "User %s attempted to access Document ID %s without permission.",
+    #         user.username,
+    #         document.id,
+    #     )
+    #     return JsonResponse({"error": "Permission denied"}, status=403), None
 
     # If everything is fine, return the Document
     return None, document
@@ -220,8 +224,13 @@ def _create_document_from_data(request, data):
 
     document_schema = DocumentSchema.objects.filter(id=document_schema_id).first()
     if not document_schema:
-        logger.warning("Document Schema ID %s not found. Cannot create Document.", document_schema_id)
-        raise ValidationError(f"Document Schema with ID {document_schema_id} does not exist.")
+        logger.warning(
+            "Document Schema ID %s not found. Cannot create Document.",
+            document_schema_id,
+        )
+        raise ValidationError(
+            f"Document Schema with ID {document_schema_id} does not exist."
+        )
 
     document = Document.objects.create(
         document_schema=document_schema,
