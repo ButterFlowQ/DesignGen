@@ -14,12 +14,12 @@ class LLMWrapper:
     A wrapper around an AI client for processing messages and retrieving structured responses.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, model: str = "openai:o1-preview-2024-09-12") -> None:
         """
         Initializes the LLMWrapper with the default AI client and model.
         """
         self.client = ai.Client()
-        self.model = "openai:o1-preview-2024-09-12"  # "anthropic:claude-3-5-sonnet-20241022" # o1-mini-2024-09-12, o1-2024-12-17, gpt-4o-2024-08-06, o1-preview-2024-09-12
+        self.model = model  # "anthropic:claude-3-5-sonnet-20241022" # o1-mini-2024-09-12, o1-2024-12-17, gpt-4o-2024-08-06, o1-preview-2024-09-12
 
     def get_response(
         self, messages: List[Dict[str, str]], expected_fields: Dict[str, str]

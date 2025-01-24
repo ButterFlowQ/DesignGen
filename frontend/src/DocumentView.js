@@ -148,7 +148,7 @@ function DocumentView() {
               <h2>Chat Messages</h2>
               <button
                 onClick={resetConversation}
-                style={{ ...styles.sendButton, maxHeight: "50%" }}
+                style={{ ...styles.sendButton, maxHeight: "50%", marginLeft: "auto" }}
               >
                 {" "}
                 New Conversation
