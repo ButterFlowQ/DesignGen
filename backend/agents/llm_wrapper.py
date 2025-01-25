@@ -32,7 +32,7 @@ class LLMWrapper:
             raw_response = self._get_completion(messages)
             logger.info(raw_response)
             # print to be removed after logging works properly
-            print(raw_response)
+            print(repr(raw_response))
 
             parsed_response = self.parse_response(raw_response)
             if not all(key in parsed_response for key in expected_fields.values()):
@@ -74,11 +74,14 @@ class LLMWrapper:
     
     def parse_response(self, raw_response: str) -> Dict[str, str]:
         # Some models return extra text before and after the JSON object, so we need to extract just the JSON portion
+        
         start_idx = raw_response.find('{')
         end_idx = raw_response.rfind('}')
         if start_idx == -1 or end_idx == -1:
             raise ValueError("No valid JSON object found in model response")
         json_str = raw_response[start_idx:end_idx + 1]
+
+        
         parsed_response = json.loads(json_str)
         return parsed_response
 
