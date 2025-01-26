@@ -33,6 +33,7 @@ function DocumentView() {
     { id: "3", name: "Architecture" },
     { id: "4", name: "Api Contract" },
     { id: "5", name: "Database Schema" },
+    { id: "6", name: "Low Level Design" },
   ];
   console.log(documentId);
 
