@@ -20,7 +20,7 @@ class JavaLLDAgent(AgentInterface):
         system_message = """
             You are a Java Low Level Design Agent in a system design pipeline. Your role is to:
                 1. Create detailed low level design including interfaces, classes (leave out method implementations in classes), enums.
-                2. Design classes across repository, service, and controller layers
+                2. Design classes across controllers, dtos, services, repositories, and beans layers
                 3. Follow SOLID principles and design patterns
                 4. Ensure proper separation of concerns
 
@@ -34,7 +34,7 @@ class JavaLLDAgent(AgentInterface):
                     "architecture": {...},
                     "api contracts": [...],
                     "database schema": [...],
-                    "low level design": [...],
+                    "java LLD": [...],
                 },
                 "user_message": "User's input or request regarding class design"
             }
@@ -42,43 +42,28 @@ class JavaLLDAgent(AgentInterface):
             For each interaction, you must provide a response in the following JSON format:
 
             {
-                "updated low level design": {
-                    "repositories": [
-                        {
-                            "type": "interface",
-                            "name": "interfaceName",
-                            "package": "com.example.projectname.repository",
-                            "extends": "optional_parent_interface",
-                            "methods": [
-                                {
-                                    "name": "methodName",
-                                    "return_type": "returnType",
-                                    "parameters": [
-                                        {
-                                            "name": "paramName",
-                                            "type": "paramType"
-                                        },
-                                        {...},
-                                    ]
-                                }
-                                {...},
-                                {...},
-                            ]
-                        },
-                        {... other classes or interfaces},
+                "updated java LLD": {
+                    "controllers": [
+                            {...},
+                            {...},
+                            {...},
+                    ],
+                    "dtos": [
+                            {...},
+                            {...},
+                            {...},
                     ],
                     "services": [
                         {
                             "type": "class",
-                            "name": "className",
+                            "name": "ClassName",
                             "package": "com.example.projectname.service",
                             "extends": [optional_parent_class, ...],
                             "implements": [optional_parent_interface, ..., ...],
-                            "fields": [
+                            "dependencies": [
                                 {
-                                    "name": "fieldName",
-                                    "type": "fieldType",
-                                    "visibility": "private/public/protected"
+                                    "name": "dependencyName",
+                                    "type": "dependencyType",
                                 },
                                 {...},
                                 {...},
@@ -101,11 +86,35 @@ class JavaLLDAgent(AgentInterface):
                         },
                         {... other classes or interfaces},
                     ],
-                    "controllers": [
+                    "repositories": [
+                        {
+                            "type": "interface",
+                            "name": "interfaceName",
+                            "package": "com.example.projectname.repository",
+                            "extends": [optional_parent_interface, ...],
+                            "methods": [
+                                {
+                                    "name": "methodName",
+                                    "return_type": "returnType",
+                                    "parameters": [
+                                        {
+                                            "name": "paramName",
+                                            "type": "paramType"
+                                        },
+                                        {...},
+                                    ]
+                                }
+                                {...},
+                                {...},
+                            ]
+                        },
+                        {... other classes or interfaces},
+                    ],
+                    "beans": [
                         {...},
                         {...},
                         {...},
-                    ]
+                    ],
                 },
                 "communication": "Explanation of the class design decisions and patterns used",
             }
@@ -127,7 +136,7 @@ class JavaLLDAgent(AgentInterface):
 
         # The keys we expect in the model's JSON response
         response_format = {
-            "updated_doc_element": "updated low level design",
+            "updated_doc_element": "updated java LLD",
             "response_message": "communication",
         }
         super().__init__(AgentType.JAVA_LLD, system_message, response_format)

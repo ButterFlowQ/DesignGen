@@ -29,7 +29,7 @@ class AgentInterface:
     ) -> LLMResponse:
         pass
 
-    def generate_llm_history(self, chat_history: List[ChatMessage]) -> List[LLMMessage]:
+    def generate_llm_history(self, chat_history: List[ChatMessage], agent_type: AgentType = None) -> List[LLMMessage]:
         """
         Converts the chat history into a list of messages suitable for the LLM.
 
@@ -44,12 +44,12 @@ class AgentInterface:
         # Convert chat history
         for chat in chat_history:
             role = "user" if chat.is_user_message else "assistant"
-            message_content = self.get_message_content(chat)
+            message_content = self.get_message_content(chat, agent_type)
             llm_messages.append({"role": role, "content": message_content})
 
         return llm_messages
 
-    def get_message_content(self, chat: ChatMessage) -> str:
+    def get_message_content(self, chat: ChatMessage, agent_type: AgentType) -> str:
         """
         Builds the appropriate message content depending on whether the sender is a user or
         an agent.
@@ -57,10 +57,18 @@ class AgentInterface:
         :param chat: The ChatMessage being processed.
         :return: A string containing the relevant content for the LLM.
         """
+        document_elements = {}
+        if agent_type == AgentType.JAVA_CODE_GENERATOR:
+            document_elements = {k: v for k, v in chat.current_document.document_elements.items() if (k != "react lld" or k != "react code")}
+        elif agent_type == AgentType.REACT_CODE_GENERATOR:
+            document_elements = {k: v for k, v in chat.current_document.document_elements.items() if (k != "java lld" or k != "java code")}
+        else:
+            document_elements = {k: v for k, v in chat.current_document.document_elements.items() if (k != "java code" or k != "react code")}
+
         if chat.is_user_message:
             message = {
                 "user message": chat.message,
-                "document": chat.current_document.document_elements,
+                "document": document_elements,
             }
             return json.dumps(message)
 
