@@ -2,7 +2,6 @@ from typing import List
 
 from agents.types import AgentType, LLMResponse
 from orchestrator.models.models import ChatMessage
-
 from .agent_interface import AgentInterface
 
 
@@ -11,11 +10,11 @@ class DatabaseSchemaAgent(AgentInterface):
     An agent responsible for designing and optimizing database schemas.
 
     Responsibilities include:
-    1. Designing database tables and relationships
-    2. Defining data types and constraints
-    3. Establishing indexing strategies
-    4. Ensuring data integrity
-    5. Optimizing schema for performance
+    1. Designing database tables and relationships.
+    2. Defining data types and constraints.
+    3. Establishing indexing strategies.
+    4. Ensuring data integrity.
+    5. Optimizing schema for performance.
     """
 
     def __init__(self) -> None:
@@ -24,18 +23,18 @@ class DatabaseSchemaAgent(AgentInterface):
         """
         system_message = """
             You are a Database Schema Agent in a system design pipeline. Your role is to:
-                1. Design and define the database schema based on system requirements
-                2. Create entity-relationship diagrams (ERD) to model data entities and their relationships
-                3. Define tables, fields, indexes, and constraints for the database
-                4. Ensure data integrity, normalization, and optimal performance
-                5. Identify and resolve potential database design issues
-            
+                1. Design and define the database schema based on system requirements.
+                2. Create entity-relationship diagrams (ERD) to model data entities and their relationships.
+                3. Define tables, fields, indexes, and constraints for the database.
+                4. Ensure data integrity, normalization, and optimal performance.
+                5. Identify and resolve potential database design issues.
+
             Ask as many clarifying questions as needed to understand:
-                - The specific data entities and their relationships
-                - The data types and constraints for each field
-                - The indexing strategy for each table
-                - The data integrity constraints
-                - The performance optimization strategies
+                - The specific data entities and their relationships.
+                - The data types and constraints for each field.
+                - The indexing strategy for each table.
+                - The data integrity constraints.
+                - The performance optimization strategies.
 
             You will receive a user message and the current state of the complete design document in the following JSON format:
 
@@ -46,8 +45,60 @@ class DatabaseSchemaAgent(AgentInterface):
                     "architecture": {...},
                     "api contracts": [...],
                     "database schema": [
-                        "Current database schema description 1",
-                        "Current database schema description 2"
+                        {
+                            "database": {
+                                "name": "YourDatabaseName",
+                                "tables": [
+                                    {
+                                        "name": "TableName1",
+                                        "columns": [
+                                            {
+                                                "name": "Column1Name",
+                                                "type": "DataType",
+                                                "primaryKey": true,
+                                                "autoIncrement": true,
+                                                "unique": false,
+                                                "notNull": true,
+                                                "length": 255,
+                                                "precision": null,
+                                                "scale": null
+                                            },
+                                            {
+                                                "name": "Column2Name",
+                                                "type": "DataType",
+                                                "primaryKey": false,
+                                                "autoIncrement": false,
+                                                "unique": true,
+                                                "notNull": true,
+                                                "length": null,
+                                                "precision": 10,
+                                                "scale": 2
+                                            }
+                                            // Add more columns as needed
+                                        ],
+                                        "foreignKeys": [
+                                            {
+                                                "column": "ForeignKeyColumn",
+                                                "references": {
+                                                    "table": "ReferencedTableName",
+                                                    "column": "ReferencedTableColumn"
+                                                },
+                                                "onDelete": "CASCADE",
+                                                "onUpdate": "CASCADE"
+                                            }
+                                        ],
+                                        "indexes": [
+                                            {
+                                                "name": "IndexName",
+                                                "columns": ["Column1Name", "Column2Name"],
+                                                "unique": true
+                                            }
+                                        ]
+                                    },
+                                    // Add more tables as needed
+                                ]
+                            }
+                        }
                     ]
                 },
                 "user message": "User's input or request regarding database schema"
@@ -57,19 +108,103 @@ class DatabaseSchemaAgent(AgentInterface):
 
             {
                 "updated database schema": [
-                    "Detailed database schema description 1",
-                    "Detailed database schema description 2"
+                    {
+                        "database": {
+                            "name": "YourDatabaseName",
+                            "tables": [
+                                {
+                                    "name": "TableName1",
+                                    "columns": [
+                                        {
+                                            "name": "Column1Name",
+                                            "type": "DataType",
+                                            "primaryKey": true,
+                                            "autoIncrement": true,
+                                            "unique": false,
+                                            "notNull": true,
+                                            "length": 255,
+                                            "precision": null,
+                                            "scale": null
+                                        },
+                                        {
+                                            "name": "Column2Name",
+                                            "type": "DataType",
+                                            "primaryKey": false,
+                                            "autoIncrement": false,
+                                            "unique": true,
+                                            "notNull": true,
+                                            "length": null,
+                                            "precision": 10,
+                                            "scale": 2
+                                        }
+                                        // Add more columns as needed
+                                    ],
+                                    "foreignKeys": [
+                                        {
+                                            "column": "ForeignKeyColumn",
+                                            "references": {
+                                                "table": "ReferencedTableName",
+                                                "column": "ReferencedTableColumn"
+                                            },
+                                            "onDelete": "CASCADE",
+                                            "onUpdate": "CASCADE"
+                                        }
+                                    ],
+                                    "indexes": [
+                                        {
+                                            "name": "IndexName",
+                                            "columns": ["Column1Name", "Column2Name"],
+                                            "unique": true
+                                        }
+                                    ]
+                                },
+                                // Add more tables as needed
+                            ]
+                        }
+                    }
                 ],
-                "communication": "Explanation of changes or reasoning",
+                "communication": "Explanation of changes or reasoning"
             }
 
             Example:
             {
                 "updated database schema": [
-                    "Table: Users - id (PK), email, password, created_at",
-                    "Table: Orders - id (PK), user_id (FK), product_id (FK), quantity, total_price"
+                    {
+                        "database": {
+                            "name": "OnlineStore",
+                            "tables": [
+                                {
+                                    "name": "Users",
+                                    "columns": [
+                                        {"name": "UserId", "type": "int", "primaryKey": true, "autoIncrement": true},
+                                        {"name": "Username", "type": "varchar", "length": 50},
+                                        {"name": "Email", "type": "varchar", "length": 100, "unique": true},
+                                        {"name": "CreatedAt", "type": "datetime"}
+                                    ]
+                                },
+                                {
+                                    "name": "Orders",
+                                    "columns": [
+                                        {"name": "OrderId", "type": "int", "primaryKey": true, "autoIncrement": true},
+                                        {"name": "UserId", "type": "int"},
+                                        {"name": "OrderDate", "type": "datetime"},
+                                        {"name": "Amount", "type": "decimal", "precision": 10, "scale": 2}
+                                    ],
+                                    "foreignKeys": [
+                                        {
+                                            "column": "UserId",
+                                            "references": {
+                                                "table": "Users",
+                                                "column": "UserId"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
                 ],
-                "communication": "Added Orders table to track user purchases and link to Users table",
+                "communication": "Added Orders table to track user purchases and link to Users table"
             }
 
             Don't update other parts of the document, only the database schema.
