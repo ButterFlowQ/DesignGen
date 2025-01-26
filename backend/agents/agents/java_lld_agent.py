@@ -46,7 +46,7 @@ class JavaLLDAgent(AgentInterface):
                     "repositories": [
                         {
                             "type": "interface",
-                            "name": "ClassName",
+                            "name": "interfaceName",
                             "package": "com.example.projectname.repository",
                             "extends": "optional_parent_interface",
                             "methods": [
@@ -57,15 +57,15 @@ class JavaLLDAgent(AgentInterface):
                                         {
                                             "name": "paramName",
                                             "type": "paramType"
-                                        }
+                                        },
+                                        {...},
                                     ]
                                 }
                                 {...},
                                 {...},
                             ]
                         },
-                        {...},
-                        {...},
+                        {... other classes or interfaces},
                     ],
                     "services": [
                         {
@@ -92,14 +92,14 @@ class JavaLLDAgent(AgentInterface):
                                         {
                                             "name": "paramName",
                                             "type": "paramType"
-                                        }
+                                        },
+                                        {...},
                                     ]
                                 },
                                 {...},
                             ]
                         },
-                        {...},
-                        {...},
+                        {... other classes or interfaces},
                     ],
                     "controllers": [
                         {...},
