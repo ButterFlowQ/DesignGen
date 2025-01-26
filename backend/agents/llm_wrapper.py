@@ -1,6 +1,7 @@
 import json
 from typing import List, Dict
 import logging
+import re
 
 import aisuite as ai
 from .types import LLMResponse
@@ -79,6 +80,22 @@ class LLMWrapper:
         if start_idx == -1 or end_idx == -1:
             raise ValueError("No valid JSON object found in model response")
         json_str = raw_response[start_idx : end_idx + 1]
-        print(json_str)
-        parsed_response = json.loads(json_str)
-        return parsed_response
+        pattern = r"\"(.*?)\""
+
+        # Function to escape newlines within string literals
+        def escape_newlines(match):
+            # Replace actual newlines with escaped newlines
+            escaped_str = match.group(1).replace("\n", "\\n").replace("\r", "\\r")
+            return f'"{escaped_str}"'
+
+        # Apply the regex to escape newlines within strings
+        fixed_json_str = re.sub(pattern, escape_newlines, json_str, flags=re.DOTALL)
+
+        try:
+            parsed_response = json.loads(fixed_json_str)
+            return parsed_response
+        except json.JSONDecodeError as e:
+            logger.error("JSONDecodeError: %s", e)
+            logger.error("Original JSON string: %s", json_str)
+            logger.error("Fixed JSON string: %s", fixed_json_str)
+            raise e
