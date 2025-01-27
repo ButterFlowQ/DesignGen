@@ -43,11 +43,11 @@ class ReactCodeGenerationAgent(AgentInterface):
             {
                 "updated react code": [
                     {
-                        "path": "src/components/ClassName.tsx",
+                        "path": "src/apis/apiName.ts",
                         "content": "Complete file content as string"
                     },
                     {
-                        "path": "src/pages/ClassName.tsx",
+                        "path": "src/pages/pageName/componentName.tsx",
                         "content": "Complete file content as string"
                     },
                     {...},
