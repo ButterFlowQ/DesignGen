@@ -55,15 +55,38 @@ class AgentInterface:
         an agent.
 
         :param chat: The ChatMessage being processed.
+        :param agent_type: The type of agent processing the message.
         :return: A string containing the relevant content for the LLM.
         """
         document_elements = {}
-        if agent_type == AgentType.JAVA_CODE_GENERATOR:
-            document_elements = {k: v for k, v in chat.current_document.document_elements.items() if (k != "react lld" or k != "react code")}
-        elif agent_type == AgentType.REACT_CODE_GENERATOR:
-            document_elements = {k: v for k, v in chat.current_document.document_elements.items() if (k != "java lld" or k != "java code")}
-        else:
-            document_elements = {k: v for k, v in chat.current_document.document_elements.items() if (k != "java code" or k != "react code")}
+        match agent_type:
+            # Requirements specific
+            case AgentType.FUNCTIONAL_REQUIREMENT:
+                keys = ["functional requirements", "non functional requirements", "architecture", "api contracts", "database schema"]
+            case AgentType.NON_FUNCTIONAL_REQUIREMENT:
+                keys = ["functional requirements", "non functional requirements", "architecture", "api contracts", "database schema"]
+            # Architecture and Schema
+            case AgentType.ARCHITECTURE:
+                keys = ["functional requirements", "non functional requirements", "architecture", "api contracts", "database schema"]
+            case AgentType.API_CONTRACT:
+                keys = ["functional requirements", "non functional requirements", "architecture", "api contracts", "database schema"]
+            case AgentType.DATABASE_SCHEMA:
+                keys = ["functional requirements", "non functional requirements", "architecture", "api contracts", "database schema"]
+            # LLD specific
+            case AgentType.JAVA_LLD:
+                keys = ["functional requirements", "non functional requirements", "architecture", "api contracts", "database schema", "java LLD"]
+            case AgentType.REACT_LLD:
+                keys = ["functional requirements", "api contracts", "react LLD"]
+            # Code generators
+            case AgentType.JAVA_CODE_GENERATOR:
+                keys = ["functional requirements", "non functional requirements", "architecture", "api contracts", "database schema", "java code", "java LLD"]
+            case AgentType.REACT_CODE_GENERATOR:
+                keys = ["functional requirements", "api contracts",  "react code", "react LLD"]
+            # User or default case
+            case _:
+                raise NotImplementedError(f"Agent type '{agent_type}' is not supported for message content generation")
+        
+        document_elements = {k: v for k, v in chat.current_document.document_elements.items() if k in keys}
 
         if chat.is_user_message:
             message = {
@@ -72,5 +95,4 @@ class AgentInterface:
             }
             return json.dumps(message)
 
-        else:
-            return chat.llm_raw_response
+        return chat.llm_raw_response
