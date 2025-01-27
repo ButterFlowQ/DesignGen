@@ -91,5 +91,5 @@ class FunctionalRequirementAgent(AgentInterface):
         :return: An LLMResponse containing the updated requirements, communication, and a boolean
                  indicating whether to move to the next workflow.
         """
-        llm_messages = self.generate_llm_history(chat_history)
+        llm_messages = self.generate_llm_history(chat_history, AgentType.FUNCTIONAL_REQUIREMENT)
         return self.llm.get_response(llm_messages, self.response_format)

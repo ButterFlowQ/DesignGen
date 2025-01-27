@@ -79,5 +79,5 @@ class ArchitectureAgent(AgentInterface):
         :return: An LLMResponse containing the updated architecture, communication, and a boolean
                  indicating whether to move to the next workflow.
         """
-        llm_messages = self.generate_llm_history(chat_history)
+        llm_messages = self.generate_llm_history(chat_history, AgentType.ARCHITECTURE)
         return self.llm.get_response(llm_messages, self.response_format)

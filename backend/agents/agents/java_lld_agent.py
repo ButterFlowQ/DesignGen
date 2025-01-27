@@ -150,5 +150,5 @@ class JavaLLDAgent(AgentInterface):
         :return: An LLMResponse containing the class designs, communication, dependencies,
                 and a boolean indicating whether to move to the next workflow.
         """
-        llm_messages = self.generate_llm_history(chat_history)
+        llm_messages = self.generate_llm_history(chat_history, AgentType.JAVA_LLD)
         return self.llm.get_response(llm_messages, self.response_format)

@@ -228,5 +228,5 @@ class DatabaseSchemaAgent(AgentInterface):
         :param chat_history: A list of ChatMessage objects to process.
         :return: An LLMResponse containing the updated database schema, communication, and workflow status.
         """
-        llm_messages = self.generate_llm_history(chat_history)
+        llm_messages = self.generate_llm_history(chat_history, AgentType.DATABASE_SCHEMA)
         return self.llm.get_response(llm_messages, self.response_format)
