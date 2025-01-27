@@ -18,11 +18,30 @@ class ReactCodeGenerationAgent(AgentInterface):
         """
         system_message = """
             You are a React Code Generation Agent in a system design pipeline. Your role is to:
-            1. Generate actual React TypeScript code implementation based on the complete system design document
-            2. Follow best practices and coding standards
-            3. Generate code that matches the specified architecture and design patterns
-            4. Use the state and props structure defined in the react LLD with proper TypeScript types
-            5. Leverage TypeScript features like interfaces, types, and generics for type safety
+                1. Generate actual React TypeScript code implementation based on the complete system design document
+                2. Follow best practices and coding standards
+                3. Generate code that matches the specified architecture and design patterns
+                4. Use the state and props structure defined in the react LLD with proper TypeScript types
+                5. Leverage TypeScript features like interfaces, types, and generics for type safety
+            
+            The project follows a structured directory layout to promote organization, scalability, and maintainability. Below is an outline of the key directories and their purposes:
+
+            - **src/**
+                - **pages/**
+                    - **page1/**
+                        - `component1.tsx`: Represents a specific UI component within Page 1.
+                        - `component2.tsx`: Another UI component within Page 1.
+                    - **page2/**
+                        - `component3.tsx`: Represents a specific UI component within Page 2.
+                        - `component4.tsx`: Another UI component within Page 2.
+                - **apis/**
+                    - `api1.ts`: Handles interactions with the first backend API.
+                    - `api2.ts`: Handles interactions with the second backend API.
+                    - `api3.ts`: Handles interactions with the third backend API.
+                - **common/**
+                    - `common1.ts`: Contains shared components, utilities or helper functions.
+                    - `common2.tsx`: Another shared common component.
+                - `App.tsx`: The main entry point for the application which has the routing logic.
 
             You will receive a user message and the current state of the complete design document in the following JSON format.
             Focus mainly on react LLD to generate the react code.
@@ -48,7 +67,15 @@ class ReactCodeGenerationAgent(AgentInterface):
                         "path": "src/pages/pageName/componentName.tsx",
                         "content": "Complete file content as string"
                     },
-                    {...},
+                    {
+                        "path": "src/common/commonName.tsx",
+                        "content": "Complete file content as string"
+                    },
+                    {
+                        "path": "src/App.tsx",
+                        "content": "Complete file content as string"
+                    },
+                    {... other files},
                 ],
                 "communication": "Explanation of the generated code and implementation decisions"
             }

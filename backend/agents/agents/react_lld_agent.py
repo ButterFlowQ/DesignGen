@@ -40,64 +40,89 @@ class ReactLLDAgent(AgentInterface):
                 "user_message": "User's input or request regarding frontend class design"
             }
 
+            The project follows a structured directory layout to promote organization, scalability, and maintainability. Below is an outline of the key directories and their purposes:
+
+            - **src/**
+                - **pages/**
+                    - **page1/**
+                        - `component1.tsx`: Represents a specific UI component within Page 1.
+                        - `component2.tsx`: Another UI component within Page 1.
+                    - **page2/**
+                        - `component3.tsx`: Represents a specific UI component within Page 2.
+                        - `component4.tsx`: Another UI component within Page 2.
+                - **apis/**
+                    - `api1.ts`: Handles interactions with the first backend API.
+                    - `api2.ts`: Handles interactions with the second backend API.
+                    - `api3.ts`: Handles interactions with the third backend API.
+                - **common/**
+                    - `common1.ts`: Contains shared components, utilities or helper functions.
+                    - `common2.tsx`: Another shared common component.
+                - `App.tsx`: The main entry point for the application which has the routing logic.
+
             For each interaction, you must provide a response in the following JSON format:
 
             {
                 "updated react LLD": {
-                    "components": {
-                        "type": "component",
-                        "name": "ComponentName",
-                        "location": "src/pages/page1/ComponentName.js",
-                        "props": [
-                            {
-                                "name": "propName",
-                                "type": "propType",
-                                "required": true | false,
-                                "defaultValue": "defaultValue"
-                            }
-                        ],
-                        "state": [
-                            {
-                                "name": "stateName",
-                                "type": "stateType",
-                                "initialValue": "initialValue"
-                            }
-                        ],
-                        "children": [
-                            "ChildComponentName1",
-                            "ChildComponentName2"
-                        ],
-                        "apis": [
-                            {
-                                "name": "apiName",
-                                "location": "src/apis/apiName.js"
-                            }
-                        ],
-                        "methods": [
-                            {
-                                "name": "methodName",
-                                "visibility": "public" | "private" | "protected",
-                                "returnType": "returnType",
-                                "parameters": [
-                                    {
-                                        "name": "paramName",
-                                        "type": "paramType"
-                                    }
-                                ]
-                            }
-                        ]
-                        ... other components
-                    },
+                    "components": [
+                        {
+                            "type": "component",
+                            "name": "ComponentName",
+                            "location": "src/pages/page1/ComponentName.tsx" or "src/common/commonName.tsx",
+                            "description": "Description of the component",
+                            "props": [
+                                {
+                                    "name": "propName",
+                                    "type": "propType",
+                                    "required": true | false,
+                                    "defaultValue": "defaultValue"
+                                }
+                            ],
+                            "state": [
+                                {
+                                    "name": "stateName",
+                                    "type": "stateType",
+                                    "initialValue": "initialValue"
+                                }
+                            ],
+                            "children": [
+                                "ChildComponentName1",
+                                "ChildComponentName2"
+                            ],
+                            "apis": [
+                                {
+                                    "name": "apiName",
+                                    "location": "src/apis/apiName.ts",
+                                }
+                            ],
+                            "methods": [
+                                {
+                                    "name": "methodName",
+                                    "visibility": "public" | "private" | "protected",
+                                    "returnType": "returnType",
+                                    "parameters": [
+                                        {
+                                            "name": "paramName",
+                                            "type": "paramType"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        ... other components,
+                    ],
                     "pages": [
                         {
                             "path": "/example-path",
-                            "component": "ComponentName"
+                            "component": "ComponentName",
+                            "description": "Description of the page",
                         },
                         ... other pages
                     ],
                     "apis": [
                         {
                             "name": "nameofApi",
+                            "location": "src/apis/apiName.ts",
+                            "description": "Description of the api",
                             "inputParams": {
                                 "a": "string",
                                 "b": "number"
@@ -107,7 +132,7 @@ class ReactLLDAgent(AgentInterface):
                                 "b": "number"
                             }
                         }
-                        .... other apis used by this component
+                        ... other apis
                     ]
                 },
                 "communication": "Explanation of the frontend class design decisions and patterns used"

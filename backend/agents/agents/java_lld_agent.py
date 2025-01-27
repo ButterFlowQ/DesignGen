@@ -51,6 +51,7 @@ class JavaLLDAgent(AgentInterface):
                         {
                             "type": "dto class",
                             "name": "ClassName",
+                            "description": "Description of the dto class",
                             "package": "com.example.projectname.dtos",
                             "fields": [
                                 {
@@ -68,6 +69,7 @@ class JavaLLDAgent(AgentInterface):
                         {
                             "type": "class",
                             "name": "ClassName",
+                            "description": "Description of the service class",
                             "package": "com.example.projectname.services",
                             "extends": [optional_parent_class, ...],
                             "implements": [optional_parent_interface, ..., ...],
@@ -102,6 +104,7 @@ class JavaLLDAgent(AgentInterface):
                             "type": "interface",
                             "name": "interfaceName",
                             "package": "com.example.projectname.repositories",
+                            "description": "Description of the repository interface",
                             "extends": [optional_parent_interface, ...],
                             "methods": [
                                 {
@@ -125,6 +128,7 @@ class JavaLLDAgent(AgentInterface):
                         {
                             "type": "entity class",
                             "name": "ClassName",
+                            "description": "Description of the entity class",
                             "package": "com.example.projectname.entities",
                             "fields": [
                                 {
