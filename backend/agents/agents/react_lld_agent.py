@@ -29,6 +29,7 @@ class ReactLLDAgent(AgentInterface):
             {
                 "document": {
                     "functional requirements": [...],
+                    "architecture": {...},
                     "api contracts": [...],
                     "react LLD": {
                         "components": {...},

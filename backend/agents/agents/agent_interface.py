@@ -76,12 +76,12 @@ class AgentInterface:
             case AgentType.JAVA_LLD:
                 keys = ["functional requirements", "non functional requirements", "architecture", "api contracts", "database schema", "java LLD"]
             case AgentType.REACT_LLD:
-                keys = ["functional requirements", "api contracts", "react LLD"]
+                keys = ["functional requirements", "architecture", "api contracts", "react LLD"]
             # Code generators
             case AgentType.JAVA_CODE_GENERATOR:
                 keys = ["functional requirements", "non functional requirements", "architecture", "api contracts", "database schema", "java code", "java LLD"]
             case AgentType.REACT_CODE_GENERATOR:
-                keys = ["functional requirements", "api contracts",  "react code", "react LLD"]
+                keys = ["functional requirements", "architecture", "api contracts", "react code", "react LLD"]
             # User or default case
             case _:
                 raise NotImplementedError(f"Agent type '{agent_type}' is not supported for message content generation")

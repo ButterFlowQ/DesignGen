@@ -29,6 +29,7 @@ class ReactCodeGenerationAgent(AgentInterface):
             {
                 "document": {
                     "functional requirements": [...],
+                    "architecture": {...},
                     "api contracts": [...],
                     "react LLD": [...],
                     "react code": [...],
