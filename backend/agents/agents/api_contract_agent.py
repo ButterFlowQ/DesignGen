@@ -177,5 +177,5 @@ class APIContractAgent(AgentInterface):
         :param chat_history: A list of ChatMessage objects to process.
         :return: An LLMResponse containing the updated API contracts, communication, and workflow status.
         """
-        llm_messages = self.generate_llm_history(chat_history)
+        llm_messages = self.generate_llm_history(chat_history, AgentType.API_CONTRACT)
         return self.llm.get_response(llm_messages, self.response_format)

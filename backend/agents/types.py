@@ -14,6 +14,10 @@ class AgentType(str, Enum):
     API_CONTRACT = auto()
     DATABASE_SCHEMA = auto()
     HTML_GENERATOR = auto()
+    JAVA_LLD = auto()
+    JAVA_CODE_GENERATOR = auto()
+    REACT_CODE_GENERATOR = auto()
+    REACT_LLD = auto()
 
 
 class LLMMessage(TypedDict):

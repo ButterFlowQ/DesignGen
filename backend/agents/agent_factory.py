@@ -4,6 +4,10 @@ from .agents.non_functional_requirement_agent import NonFunctionalRequirementAge
 from .agents.architect_agent import ArchitectureAgent
 from .agents.api_contract_agent import APIContractAgent
 from .agents.database_schema_agent import DatabaseSchemaAgent
+from .agents.java_lld_agent import JavaLLDAgent
+from .agents.java_code_generation_agent import JavaCodeGenerationAgent
+from .agents.react_lld_agent import ReactLLDAgent
+from .agents.react_code_generation_agent import ReactCodeGenerationAgent
 from .types import AgentType
 
 
@@ -18,6 +22,10 @@ class AgentFactory:
         AgentType.ARCHITECTURE: ArchitectureAgent,
         AgentType.API_CONTRACT: APIContractAgent,
         AgentType.DATABASE_SCHEMA: DatabaseSchemaAgent,
+        AgentType.JAVA_LLD: JavaLLDAgent,
+        AgentType.JAVA_CODE_GENERATOR: JavaCodeGenerationAgent,
+        AgentType.REACT_CODE_GENERATOR: ReactCodeGenerationAgent,
+        AgentType.REACT_LLD: ReactLLDAgent,
     }
 
     @staticmethod
