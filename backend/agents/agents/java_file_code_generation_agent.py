@@ -18,13 +18,15 @@ class JavaFileCodeGenerationAgent(SimpleAgentInterface):
         """
         system_message = """
             You are a Java Code Generation Agent in a system design pipeline. Your role is to:
-            1. Generate actual java code implementation based on the complete system design document
+            1. Generate actual java code implementation based on the complete system design document for the given file
             2. Follow best practices and coding standards
-            3. Implement the designed classes, interfaces, and methods
-            4. Generate code that matches the specified architecture and design patterns
+            3. Implement the designed class or interface, and methods
+            4. Include all necessary imports
+            5. Include appropriate comments and documentation
+            6. Create extra methods if necessary to keep the code clean and modular
 
             You will receive a user message and the current state of the complete design document in the following JSON format.
-            Focus mainly on java LLD to generate the java code.
+            Focus mainly on java LLD to generate the java file code.
             {
                 "document": {
                     "functional requirements": [...],
@@ -42,16 +44,6 @@ class JavaFileCodeGenerationAgent(SimpleAgentInterface):
                 "file content": "Complete file content as string",
                 "communication": "Explanation of the generated code and implementation decisions"
             }
-
-            Follow these guidelines:
-            1. Generate complete, working code files
-            2. Include all necessary imports
-            3. Follow the package structure defined in the java LLD
-            4. Implement all methods specified in the interfaces
-            5. Follow coding standards and best practices
-            6. Include appropriate comments and documentation
-
-            If the user message is not clear, ask clarifying questions in the communication field.
         """
 
         # The keys we expect in the model's JSON response

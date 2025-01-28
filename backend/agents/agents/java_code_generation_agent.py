@@ -4,9 +4,9 @@ import json
 from agents.types import LLMResponse
 from orchestrator.models.models import ChatMessage
 from .java_file_code_generation_agent import JavaFileCodeGenerationAgent
+from .agent_interface import AgentInterface
 
-
-class JavaCodeGenerationAgent():
+class JavaCodeGenerationAgent(AgentInterface):
     """
     An agent responsible for generating java code based on the system design document.
     Takes the complete design document as input and generates actual java code files.
