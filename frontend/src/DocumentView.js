@@ -38,7 +38,7 @@ function DocumentView() {
     { id: "8", name: "React LLD" },
     { id: "9", name: "React Code" },
   ];
-  console.log(documentId);
+  // console.log(documentId);
 
   useEffect(() => {
     async function fetchDoc() {
@@ -138,7 +138,7 @@ function DocumentView() {
     return <div style={styles.error}>Error: No document data found.</div>;
   }
 
-  const { chat_messages, document, html_document } = docData;
+  const { chat_messages, document } = docData;
 
   return (
     <div style={styles.pageContainer}>
@@ -167,14 +167,20 @@ function DocumentView() {
       <div style={styles.container}>
         {/* Document panel */}
         <div style={styles.docPanel}>
-          {/* If it's HTML, you can render with dangerouslySetInnerHTML */}
-          <div dangerouslySetInnerHTML={{ __html: html_document }} />
-
-          <JsonView
-            data={JSON.parse(document)}
-            shouldExpandNode={allExpanded}
-            style={darkStyles}
-          />
+          {Object.entries(JSON.parse(document)).map(([key, value]) => {
+            const stringValue = String(value);
+            return stringValue.trim().startsWith('<div') ? (
+              <div key={key} dangerouslySetInnerHTML={{ __html: value }} />
+            ) : (
+              <div key={key}>
+                <JsonView
+                  data={{ [key]: value }}
+                  shouldExpandNode={allExpanded}
+                  style={darkStyles}
+                />
+              </div>
+            );
+          })}
         </div>
 
         {/* Chat panel */}

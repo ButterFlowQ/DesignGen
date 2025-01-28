@@ -116,44 +116,45 @@ class APIContractAgent(AgentInterface):
 
             Example:
             {
-              "updated api contracts": [
+                "updated api contracts": [
                     {
-                    "swagger": "2.0",
-                    "info": {
-                        "title": "Example API",
-                        "version": "1.0"
+                        "swagger": "2.0",
+                        "info": {
+                            "title": "Example API",
+                            "version": "1.0"
                     },
                     "paths": {
                         "/users/{userId}": {
-                        "get": {
-                            "summary": "Get user by ID",
-                            "parameters": [
-                                {
-                                    "name": "userId",
-                                    "in": "path",
-                                    "required": true,
-                                    "type": "integer",
-                                    "description": "ID of the user to fetch"
-                                }
-                            ],
-                            "responses": {
-                                "200": {
-                                    "description": "Successful response",
-                                    "schema": {
-                                        "type": "object",
-                                        "properties": {
-                                            "name": { "type": "string" },
-                                            "email": { "type": "string" }
+                            "get": {
+                                "summary": "Get user by ID",
+                                "parameters": [
+                                    {
+                                        "name": "userId",
+                                        "in": "path",
+                                        "required": true,
+                                        "type": "integer",
+                                        "description": "ID of the user to fetch"
+                                    }
+                                ],
+                                "responses": {
+                                    "200": {
+                                        "description": "Successful response",
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "name": { "type": "string" },
+                                                "email": { "type": "string" }
+                                            }
                                         }
                                     }
                                 }
-                            }
-                        }
-                        }
+                            },
+                            ... other methods
+                        },
+                        ... other paths
                     }
-                    }
-              ],
-              "communication": "Added POST /users endpoint to support user registration",
+                ],
+                "communication": "Added POST /users endpoint to support user registration",
             }
 
             Don't update other parts of the document, only the API contracts.
@@ -178,4 +179,84 @@ class APIContractAgent(AgentInterface):
         :return: An LLMResponse containing the updated API contracts, communication, and workflow status.
         """
         llm_messages = self.generate_llm_history(chat_history, AgentType.API_CONTRACT)
-        return self.llm.get_response(llm_messages, self.response_format)
+        response = self.llm.get_response(llm_messages, self.response_format)
+        response["html_response"] = self.get_html(response["updated_doc_element"])
+        return response
+
+    def get_html(self, api_contracts: List[dict]) -> str:
+        """
+        Converts API contracts into HTML format using tables.
+        
+        :param api_contracts: List of API contract dictionaries in Swagger format
+        :return: HTML formatted string containing the API contracts
+        """
+        if not api_contracts:
+            return "<p>No API contracts defined yet.</p>"
+            
+        html = "<div class='api-contracts'>\n"
+        html += "<style>\n"
+        html += ".api-table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }\n"
+        html += ".api-table th, .api-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }\n"
+        html += ".api-table th { background-color: #f5f5f5; }\n"
+        html += ".api-table ul { margin: 0; padding-left: 20px; }\n"
+        html += "</style>\n"
+        
+        html += "<h3>API Contracts:</h3>\n"
+        
+        for contract in api_contracts:
+            info = contract.get("info", {})
+            paths = contract.get("paths", {})
+            
+            html += f"<h4>{info.get('title', 'Untitled API')} (v{info.get('version', 'n/a')})</h4>\n"
+            html += "<table class='api-table'>\n"
+            html += "<thead>\n"
+            html += "    <tr>\n"
+            html += "        <th>Method</th>\n"
+            html += "        <th>Path</th>\n"
+            html += "        <th>Summary</th>\n"
+            html += "        <th>Parameters</th>\n"
+            html += "        <th>Responses</th>\n"
+            html += "    </tr>\n"
+            html += "</thead>\n"
+            html += "<tbody>\n"
+            
+            for path, methods in paths.items():
+                for method, details in methods.items():
+                    html += "    <tr>\n"
+                    html += f"        <td><strong>{method.upper()}</strong></td>\n"
+                    html += f"        <td>{path}</td>\n"
+                    html += f"        <td>{details.get('summary', 'No summary')}</td>\n"
+                    
+                    # Parameters column
+                    params = details.get("parameters", [])
+                    html += "        <td>\n"
+                    if params:
+                        html += "            <ul>\n"
+                        for param in params:
+                            html += f"                <li>{param.get('name')} ({param.get('in')})"
+                            if param.get('description'):
+                                html += f": {param.get('description')}"
+                            html += "</li>\n"
+                        html += "            </ul>\n"
+                    else:
+                        html += "            None"
+                    html += "        </td>\n"
+                    
+                    # Responses column
+                    responses = details.get("responses", {})
+                    html += "        <td>\n"
+                    if responses:
+                        html += "            <ul>\n"
+                        for status, response in responses.items():
+                            html += f"                <li>{status}: {response.get('description', 'No description')}</li>\n"
+                        html += "            </ul>\n"
+                    else:
+                        html += "            None"
+                    html += "        </td>\n"
+                    html += "    </tr>\n"
+            
+            html += "</tbody>\n"
+            html += "</table>\n"
+        
+        html += "</div>"
+        return html

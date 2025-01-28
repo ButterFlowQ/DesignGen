@@ -50,3 +50,4 @@ class LLMResponse(TypedDict):
     updated_doc_element: Any
     response_message: str
     raw_response: str
+    html_response: str

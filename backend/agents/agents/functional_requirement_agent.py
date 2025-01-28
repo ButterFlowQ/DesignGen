@@ -92,4 +92,29 @@ class FunctionalRequirementAgent(AgentInterface):
                  indicating whether to move to the next workflow.
         """
         llm_messages = self.generate_llm_history(chat_history, AgentType.FUNCTIONAL_REQUIREMENT)
-        return self.llm.get_response(llm_messages, self.response_format)
+        response = self.llm.get_response(llm_messages, self.response_format)
+        response["html_response"] = self.get_html(response["updated_doc_element"])
+        return response
+    
+    def get_html(self, requirements: List[str]) -> str:
+        """
+        Converts a list of functional requirements into HTML format.
+        
+        :param requirements: List of functional requirement strings
+        :return: HTML formatted string containing the requirements
+        """
+        if not requirements:
+            return "<p>No functional requirements defined yet.</p>"
+            
+        html = "<div>\n"
+        html += "<h3>Functional Requirements:</h3>\n"
+        html += "<ul>\n"
+        
+        for requirement in requirements:
+            html += f"    <li>{requirement}</li>\n"
+            
+        html += "</ul>\n"
+        html += "</div>"
+        
+        return html
+
