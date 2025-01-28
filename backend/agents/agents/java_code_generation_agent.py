@@ -1,81 +1,19 @@
 from typing import List
+import json
 
-from agents.types import AgentType, LLMResponse
+from agents.types import LLMResponse
 from orchestrator.models.models import ChatMessage
+from .java_file_code_generation_agent import JavaFileCodeGenerationAgent
 
-from .agent_interface import AgentInterface
 
-
-class JavaCodeGenerationAgent(AgentInterface):
+class JavaCodeGenerationAgent():
     """
     An agent responsible for generating java code based on the system design document.
     Takes the complete design document as input and generates actual java code files.
     """
 
-    def __init__(self) -> None:
-        """
-        Initializes the CodeGenerationAgent with a system message and response format.
-        """
-        system_message = """
-            You are a Java Code Generation Agent in a system design pipeline. Your role is to:
-            1. Generate actual java code implementation based on the complete system design document
-            2. Follow best practices and coding standards
-            3. Implement the designed classes, interfaces, and methods
-            4. Generate code that matches the specified architecture and design patterns
-
-            You will receive a user message and the current state of the complete design document in the following JSON format.
-            Focus mainly on java LLD to generate the java code.
-            {
-                "document": {
-                    "functional requirements": [...],
-                    "non functional requirements": [...],
-                    "architecture": {...},
-                    "api contracts": [...],
-                    "database schema": [...],
-                    "java LLD": [...],
-                    "java code": [...],
-                },
-                "user_message": "User's input or request regarding code generation"
-            }
-
-            For each interaction, you must provide a response in the following JSON format:
-            {
-                "updated java code": [
-                    {
-                        "path": "com/example/projectname/controllers/ClassName.java",
-                        "content": "Complete file content as string"
-                    },
-                    {
-                        "path": "com/example/projectname/services/ClassName.java",
-                        "content": "Complete file content as string"
-                    },
-                    {...},
-                ],
-                "communication": "Explanation of the generated code and implementation decisions"
-            }
-
-            Follow these guidelines:
-            1. Generate complete, working code files
-            2. Include all necessary imports
-            3. Follow the package structure defined in the java LLD
-            4. Implement all methods specified in the interfaces
-            5. Follow coding standards and best practices
-            6. Include appropriate comments and documentation
-
-            If the user message is not clear, ask clarifying questions in the communication field.
-        """
-
-        # The keys we expect in the model's JSON response
-        response_format = {
-            "updated_doc_element": "updated java code",
-            "response_message": "communication",
-        }
-        super().__init__(
-            AgentType.JAVA_CODE_GENERATOR,
-            system_message,
-            response_format,
-            "openai:gpt-4o-2024-08-06",
-        )
+    def __init__(self):
+        self.file_generator = JavaFileCodeGenerationAgent()
 
     def process(self, chat_history: List[ChatMessage]) -> LLMResponse:
         """
@@ -86,5 +24,63 @@ class JavaCodeGenerationAgent(AgentInterface):
         :return: An LLMResponse containing the generated code files, communication, dependencies,
                 and a boolean indicating whether to move to the next workflow.
         """
-        llm_messages = self.generate_llm_history(chat_history, agent_type=AgentType.JAVA_CODE_GENERATOR)
-        return self.llm.get_response(llm_messages, self.response_format)
+        # TODO: check for existence of java LLD
+        latest_document_elements = chat_history[-1].current_document.document_elements
+        java_lld = latest_document_elements["java LLD"]
+        
+        # Extract file locations from LLD
+        file_locations = self.extract_file_locations(java_lld)
+        print(file_locations)
+        
+        # Generate code for each file
+        generated_files = []
+        communications = []
+        
+        for file_location in file_locations:
+            # Prepare message for file generator with file location and LLD
+            message = {
+                "document": latest_document_elements,
+                "file name": file_location
+            }
+            
+            # Generate code for this file
+            response = self.file_generator.process(json.dumps(message))
+            
+            # Collect results
+            generated_files.append({
+                "path": file_location,
+                "content": response.updated_doc_element
+            })
+            if response.response_message:
+                communications.append(f"For {file_location}: {response.response_message}")
+        
+        # Return combined results
+        return LLMResponse(
+            updated_doc_element=generated_files,
+            communication="\n".join(communications),
+        )
+    
+    def extract_file_locations(self, java_lld: dict) -> List[str]:
+        """
+        Extracts file locations from the Java LLD JSON structure.
+
+        :param java_lld: A dictionary representing the Java LLD JSON structure.
+        :return: A list of file paths for each class/interface in the LLD.
+        """
+        file_locations = []
+
+        # Helper function to construct file path
+        def construct_file_path(package: str, class_name: str) -> str:
+            return f"{package.replace('.', '/')}/{class_name}.java"
+
+        # Iterate over each section in the LLD
+        sections = ['controllers', 'dtos', 'services', 'repositories', 'entities']
+        for section in sections:
+            section_data = java_lld.get(section, [])
+            for item in section_data:
+                package = item.get('package')
+                class_name = item.get('name')
+                if package and class_name:
+                    file_locations.append(construct_file_path(package, class_name))
+
+        return file_locations

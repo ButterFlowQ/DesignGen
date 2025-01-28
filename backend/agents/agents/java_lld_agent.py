@@ -102,7 +102,7 @@ class JavaLLDAgent(AgentInterface):
                     "repositories": [
                         {
                             "type": "interface",
-                            "name": "interfaceName",
+                            "name": "InterfaceName",
                             "package": "com.example.projectname.repositories",
                             "description": "Description of the repository interface",
                             "extends": [optional_parent_interface, ...],

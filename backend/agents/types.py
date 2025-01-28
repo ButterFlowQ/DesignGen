@@ -18,6 +18,7 @@ class AgentType(str, Enum):
     JAVA_CODE_GENERATOR = auto()
     REACT_CODE_GENERATOR = auto()
     REACT_LLD = auto()
+    JAVA_FILE_CODE_GENERATOR = auto()
 
 
 class LLMMessage(TypedDict):
