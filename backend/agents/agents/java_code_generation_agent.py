@@ -31,6 +31,7 @@ class JavaCodeGenerationAgent(AgentInterface):
         # Extract file locations from LLD
         file_locations = self.extract_file_locations(java_lld)
         print(file_locations)
+        # file_locations = file_locations[:3]
         
         # Generate code for each file
         generated_files = []
@@ -55,10 +56,11 @@ class JavaCodeGenerationAgent(AgentInterface):
                 communications.append(f"For {file_location}: {response['response_message']}")
         
         # Return combined results
-        return LLMResponse(
-            updated_doc_element=generated_files,
-            communication="\n".join(communications),
-        )
+        resp = LLMResponse()
+        resp["raw_response"] = ""
+        resp["updated_doc_element"] = generated_files
+        resp["response_message"] = "\n".join(communications)
+        return resp
     
     def extract_file_locations(self, java_lld: dict) -> List[str]:
         """
