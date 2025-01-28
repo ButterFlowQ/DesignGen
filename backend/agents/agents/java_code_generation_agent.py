@@ -49,10 +49,10 @@ class JavaCodeGenerationAgent(AgentInterface):
             # Collect results
             generated_files.append({
                 "path": file_location,
-                "content": response.updated_doc_element
+                "content": response["updated_doc_element"]
             })
-            if response.response_message:
-                communications.append(f"For {file_location}: {response.response_message}")
+            if response["response_message"]:
+                communications.append(f"For {file_location}: {response['response_message']}")
         
         # Return combined results
         return LLMResponse(

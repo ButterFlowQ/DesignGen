@@ -55,6 +55,7 @@ class JavaFileCodeGenerationAgent(SimpleAgentInterface):
             AgentType.JAVA_FILE_CODE_GENERATOR,
             system_message,
             response_format,
+            model="openai:gpt-4o-2024-08-06"
         )
 
     def process(self, message: str) -> LLMResponse:
