@@ -35,8 +35,8 @@ function DocumentView() {
     { id: "5", name: "Database Schema" },
     { id: "6", name: "Java LLD" },
     { id: "7", name: "Java Code" },
-    { id: "8", name: "React Code" },
-    { id: "9", name: "React LLD" },
+    { id: "8", name: "React LLD" },
+    { id: "9", name: "React Code" },
   ];
   console.log(documentId);
 
