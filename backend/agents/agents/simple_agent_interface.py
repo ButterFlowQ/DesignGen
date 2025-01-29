@@ -40,5 +40,3 @@ class SimpleAgentInterface:
         llm_messages.append(LLMMessage(role="user", content=message))
 
         return llm_messages
-
-
