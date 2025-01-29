@@ -3,7 +3,7 @@ import { JsonView, allExpanded, darkStyles } from "react-json-view-lite";
 import '../styles/DatabaseSchema.css';
 import '../styles/ApiContracts.css';
 
-export const FunctionalRequirements = ({ data }) => (
+export const FunctionalRequirements = ({ data, html }) => (
   <div className="doc-section">
     <h2>Functional Requirements</h2>
     <ul>
@@ -14,7 +14,7 @@ export const FunctionalRequirements = ({ data }) => (
   </div>
 );
 
-export const NonFunctionalRequirements = ({ data }) => (
+export const NonFunctionalRequirements = ({ data, html }) => (
   <div className="doc-section">
     <h2>Non-Functional Requirements</h2>
     <ul>
@@ -25,7 +25,7 @@ export const NonFunctionalRequirements = ({ data }) => (
   </div>
 );
 
-export const Architecture = ({ data }) => (
+export const Architecture = ({ data, html }) => (
   <div className="doc-section">
     <h2>Architecture</h2>
     <div style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
@@ -34,7 +34,7 @@ export const Architecture = ({ data }) => (
   </div>
 );
 
-export const ApiContracts = ({ data }) => (
+export const ApiContracts = ({ data, html }) => (
   <div className="doc-section">
     <h2>API Contracts</h2>
     <div className="api-info">
@@ -120,7 +120,7 @@ export const ApiContracts = ({ data }) => (
   </div>
 );
 
-export const DatabaseSchema = ({ data }) => (
+export const DatabaseSchema = ({ data, html }) => (
   <div className="doc-section">
     <h2>Database Schema</h2>
     {data.tables.map((table, tableIndex) => (
@@ -188,13 +188,24 @@ export const DatabaseSchema = ({ data }) => (
   </div>
 );
 
-export const JavaLLD = ({ data }) => (
+export const JavaLLD = ({ data, html }) => (
   <div className="doc-section">
     <h2>Java Low Level Design</h2>
-    <JsonView
-      data={data}
-      shouldExpandNode={allExpanded}
-      style={darkStyles}
-    />
+    {html ? (
+      <div 
+        dangerouslySetInnerHTML={{ __html: html }} 
+        style={{ 
+          transform: 'scale(0.5)', 
+          transformOrigin: 'top left',
+          marginBottom: '-50%' // Compensate for the scaling
+        }}
+      />
+    ) : (
+        <JsonView
+            data={data}
+            shouldExpandNode={allExpanded}
+            style={darkStyles}
+        />
+    )}
   </div>
-); 
+);

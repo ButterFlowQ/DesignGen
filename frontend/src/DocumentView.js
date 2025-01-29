@@ -157,11 +157,8 @@ function DocumentView() {
       <div style={styles.container}>
         {/* Document panel */}
         <div style={styles.docPanel}>
-          {/* If it's HTML, render with dangerouslySetInnerHTML */}
-          <div dangerouslySetInnerHTML={{ __html: html_document }} />
-          
           {/* Render appropriate component based on parsed document data */}
-          <DocumentRenderer document={document} />
+          <DocumentRenderer document={document} html_document={html_document}/>
         </div>
 
         {/* Chat panel */}

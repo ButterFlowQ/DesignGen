@@ -13,8 +13,9 @@ import {
   JavaLLD,
 } from "./DocumentTypeViews";
 
-const DocumentRenderer = ({ document }) => {
+const DocumentRenderer = ({ document, html_document }) => {
   const parsedDoc = JSON.parse(document);
+  const parsedHtmlDoc = JSON.parse(html_document);
   const documentComponents = {
     "functional requirements": FunctionalRequirements,
     "non functional requirements": NonFunctionalRequirements,
@@ -23,13 +24,15 @@ const DocumentRenderer = ({ document }) => {
     "database schema": DatabaseSchema,
     "java LLD": JavaLLD,
   };
+//   console.log(parsedHtmlDoc);
+//   console.log(parsedHtmlDoc["java LLD"]);
 
   return (
     <div className="document-renderer">
       {Object.entries(parsedDoc).map(([key, value]) => {
-        const Component = documentComponents[key.toLowerCase()];
+        const Component = documentComponents[key];
         return Component ? (
-          <Component key={key} data={value} />
+          <Component key={key} data={value} html={parsedHtmlDoc[key]} />
         ) : (
           <JsonView
             key={key}
