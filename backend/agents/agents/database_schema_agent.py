@@ -43,63 +43,58 @@ class DatabaseSchemaAgent(AgentInterface):
                     "functional requirements": [...],
                     "non functional requirements": [...],
                     "architecture": {...},
-                    "api contracts": [...],
-                    "database schema": [
-                        {
-                            "database": {
-                                "name": "YourDatabaseName",
-                                "tables": [
+                    "api contracts": {...},
+                    "database schema": {
+                        "name": "YourDatabaseName",
+                        "tables": [
+                            {
+                                "name": "TableName1",
+                                "columns": [
                                     {
-                                        "name": "TableName1",
-                                        "columns": [
-                                            {
-                                                "name": "Column1Name",
-                                                "type": "DataType",
-                                                "primaryKey": true,
-                                                "autoIncrement": true,
-                                                "unique": false,
-                                                "notNull": true,
-                                                "length": 255,
-                                                "precision": null,
-                                                "scale": null
-                                            },
-                                            {
-                                                "name": "Column2Name",
-                                                "type": "DataType",
-                                                "primaryKey": false,
-                                                "autoIncrement": false,
-                                                "unique": true,
-                                                "notNull": true,
-                                                "length": null,
-                                                "precision": 10,
-                                                "scale": 2
-                                            }
-                                            // Add more columns as needed
-                                        ],
-                                        "foreignKeys": [
-                                            {
-                                                "column": "ForeignKeyColumn",
-                                                "references": {
-                                                    "table": "ReferencedTableName",
-                                                    "column": "ReferencedTableColumn"
-                                                },
-                                                "onDelete": "CASCADE",
-                                                "onUpdate": "CASCADE"
-                                            }
-                                        ],
-                                        "indexes": [
-                                            {
-                                                "name": "IndexName",
-                                                "columns": ["Column1Name", "Column2Name"],
-                                                "unique": true
-                                            }
-                                        ]
+                                        "name": "Column1Name",
+                                        "type": "DataType",
+                                        "primaryKey": true,
+                                        "autoIncrement": true,
+                                        "unique": false,
+                                        "notNull": true,
+                                        "length": 255,
+                                        "precision": null,
+                                        "scale": null
                                     },
-                                    // Add more tables as needed
+                                    {
+                                        "name": "Column2Name",
+                                        "type": "DataType",
+                                        "primaryKey": false,
+                                        "autoIncrement": false,
+                                        "unique": true,
+                                        "notNull": true,
+                                        "length": null,
+                                        "precision": 10,
+                                        "scale": 2
+                                    }
+                                    // Add more columns as needed
+                                ],
+                                "foreignKeys": [
+                                    {
+                                        "column": "ForeignKeyColumn",
+                                        "references": {
+                                            "table": "ReferencedTableName",
+                                            "column": "ReferencedTableColumn"
+                                        },
+                                        "onDelete": "CASCADE",
+                                        "onUpdate": "CASCADE"
+                                    }
+                                ],
+                                "indexes": [
+                                    {
+                                        "name": "IndexName",
+                                        "columns": ["Column1Name", "Column2Name"],
+                                        "unique": true
+                                    }
                                 ]
                             }
-                        }
-                    ]
+                        ]
+                    }
                 },
                 "user message": "User's input or request regarding database schema"
             }
@@ -107,103 +102,95 @@ class DatabaseSchemaAgent(AgentInterface):
             For each interaction, you must provide a response in the following JSON format:
 
             {
-                "updated database schema": [
-                    {
-                        "database": {
-                            "name": "YourDatabaseName",
-                            "tables": [
+                "updated database schema": {
+                    "name": "YourDatabaseName",
+                    "tables": [
+                        {
+                            "name": "TableName1",
+                            "columns": [
                                 {
-                                    "name": "TableName1",
-                                    "columns": [
-                                        {
-                                            "name": "Column1Name",
-                                            "type": "DataType",
-                                            "primaryKey": true,
-                                            "autoIncrement": true,
-                                            "unique": false,
-                                            "notNull": true,
-                                            "length": 255,
-                                            "precision": null,
-                                            "scale": null
-                                        },
-                                        {
-                                            "name": "Column2Name",
-                                            "type": "DataType",
-                                            "primaryKey": false,
-                                            "autoIncrement": false,
-                                            "unique": true,
-                                            "notNull": true,
-                                            "length": null,
-                                            "precision": 10,
-                                            "scale": 2
-                                        }
-                                        // Add more columns as needed
-                                    ],
-                                    "foreignKeys": [
-                                        {
-                                            "column": "ForeignKeyColumn",
-                                            "references": {
-                                                "table": "ReferencedTableName",
-                                                "column": "ReferencedTableColumn"
-                                            },
-                                            "onDelete": "CASCADE",
-                                            "onUpdate": "CASCADE"
-                                        }
-                                    ],
-                                    "indexes": [
-                                        {
-                                            "name": "IndexName",
-                                            "columns": ["Column1Name", "Column2Name"],
-                                            "unique": true
-                                        }
-                                    ]
+                                    "name": "Column1Name",
+                                    "type": "DataType",
+                                    "primaryKey": true,
+                                    "autoIncrement": true,
+                                    "unique": false,
+                                    "notNull": true,
+                                    "length": 255,
+                                    "precision": null,
+                                    "scale": null
                                 },
-                                // Add more tables as needed
+                                {
+                                    "name": "Column2Name",
+                                    "type": "DataType",
+                                    "primaryKey": false,
+                                    "autoIncrement": false,
+                                    "unique": true,
+                                    "notNull": true,
+                                    "length": null,
+                                    "precision": 10,
+                                    "scale": 2
+                                }
+                                // Add more columns as needed
+                            ],
+                            "foreignKeys": [
+                                {
+                                    "column": "ForeignKeyColumn",
+                                    "references": {
+                                        "table": "ReferencedTableName",
+                                        "column": "ReferencedTableColumn"
+                                    },
+                                    "onDelete": "CASCADE",
+                                    "onUpdate": "CASCADE"
+                                }
+                            ],
+                            "indexes": [
+                                {
+                                    "name": "IndexName",
+                                    "columns": ["Column1Name", "Column2Name"],
+                                    "unique": true
+                                }
                             ]
-                        }
-                    }
-                ],
+                        },
+                        // Add more tables as needed
+                    ]
+                },
                 "communication": "Explanation of changes or reasoning"
             }
 
             Example:
             {
-                "updated database schema": [
-                    {
-                        "database": {
-                            "name": "OnlineStore",
-                            "tables": [
+                "updated database schema": {
+                    "name": "OnlineStore",
+                    "tables": [
+                        {
+                            "name": "Users",
+                            "columns": [
+                                {"name": "UserId", "type": "int", "primaryKey": true, "autoIncrement": true},
+                                {"name": "Username", "type": "varchar", "length": 50},
+                                {"name": "Email", "type": "varchar", "length": 100, "unique": true},
+                                {"name": "CreatedAt", "type": "datetime"}
+                            ]
+                        },
+                        {
+                            "name": "Orders",
+                            "columns": [
+                                {"name": "OrderId", "type": "int", "primaryKey": true, "autoIncrement": true},
+                                {"name": "UserId", "type": "int"},
+                                {"name": "OrderDate", "type": "datetime"},
+                                {"name": "Amount", "type": "decimal", "precision": 10, "scale": 2}
+                            ],
+                            "foreignKeys": [
                                 {
-                                    "name": "Users",
-                                    "columns": [
-                                        {"name": "UserId", "type": "int", "primaryKey": true, "autoIncrement": true},
-                                        {"name": "Username", "type": "varchar", "length": 50},
-                                        {"name": "Email", "type": "varchar", "length": 100, "unique": true},
-                                        {"name": "CreatedAt", "type": "datetime"}
-                                    ]
-                                },
-                                {
-                                    "name": "Orders",
-                                    "columns": [
-                                        {"name": "OrderId", "type": "int", "primaryKey": true, "autoIncrement": true},
-                                        {"name": "UserId", "type": "int"},
-                                        {"name": "OrderDate", "type": "datetime"},
-                                        {"name": "Amount", "type": "decimal", "precision": 10, "scale": 2}
-                                    ],
-                                    "foreignKeys": [
-                                        {
-                                            "column": "UserId",
-                                            "references": {
-                                                "table": "Users",
-                                                "column": "UserId"
-                                            }
-                                        }
-                                    ]
+                                    "column": "UserId",
+                                    "references": {
+                                        "table": "Users",
+                                        "column": "UserId"
+                                    }
                                 }
                             ]
                         }
-                    }
-                ],
+                    ]
+                },
                 "communication": "Added Orders table to track user purchases and link to Users table"
             }
 

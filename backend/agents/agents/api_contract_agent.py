@@ -34,34 +34,36 @@ class APIContractAgent(AgentInterface):
 
             {
               "document": {
-                  "functional requirements": [...],
-                  "non functional requirements": [...],
-                  "architecture": {...},
-                  "api contracts": [
-                        {
-                        "swagger": "2.0",
-                        "info": {
-                            "title": "",
-                            "version": ""
-                        },
-                        "paths": {
-                            "<path>": {
-                                "get": {
-                                    "summary": "",
-                                    "parameters": [
-                                        {
-                                            ...
-                                        }
-                                    ],
-                                    "responses": {
-                                        "200": {
-                                            "description": "Successful response",
-                                            "schema": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "name": { "type": "string" },
-                                                    "email": { "type": "string" }
-                                                }
+                "functional requirements": [...],
+                "non functional requirements": [...],
+                "architecture": {...},
+                "api contracts": {
+                    "swagger": "2.0",
+                    "info": {
+                        "title": "",
+                        "version": ""
+                    },
+                    "paths": {
+                        "<path>": {
+                            "get": {
+                                "summary": "",
+                                "parameters": [
+                                    {
+                                        "name": "",
+                                        "in": "",
+                                        "required": true,
+                                        "type": "",
+                                        "description": ""
+                                    }
+                                ],
+                                "responses": {
+                                    "200": {
+                                        "description": "Successful response",
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "name": { "type": "string" },
+                                                "email": { "type": "string" }
                                             }
                                         }
                                     }
@@ -69,8 +71,8 @@ class APIContractAgent(AgentInterface):
                             }
                         }
                     }
-                  ],
-                  "database schema": [...],
+                },
+                "database schema": [...]
               },
               "user message": "User's input or request regarding API contracts"
             }
@@ -78,8 +80,7 @@ class APIContractAgent(AgentInterface):
             For each interaction, you must provide a response in the following JSON format:
 
             {
-              "updated api contracts": [
-                  {
+                "updated api contracts": {
                     "swagger": "2.0",
                     "info": {
                         "title": "",
@@ -109,15 +110,13 @@ class APIContractAgent(AgentInterface):
                             }
                         }
                     }
-                  }
-              ],
-              "communication": "Explanation of changes or reasoning",
+                },
+                "communication": "Explanation of changes or reasoning"
             }
 
             Example:
             {
-              "updated api contracts": [
-                    {
+              "updated api contracts": {
                     "swagger": "2.0",
                     "info": {
                         "title": "Example API",
@@ -125,35 +124,38 @@ class APIContractAgent(AgentInterface):
                     },
                     "paths": {
                         "/users/{userId}": {
-                        "get": {
-                            "summary": "Get user by ID",
-                            "parameters": [
-                                {
-                                    "name": "userId",
-                                    "in": "path",
-                                    "required": true,
-                                    "type": "integer",
-                                    "description": "ID of the user to fetch"
-                                }
-                            ],
-                            "responses": {
-                                "200": {
-                                    "description": "Successful response",
-                                    "schema": {
-                                        "type": "object",
-                                        "properties": {
-                                            "name": { "type": "string" },
-                                            "email": { "type": "string" }
+                            "get": {
+                                "summary": "Get user by ID",
+                                "parameters": [
+                                    {
+                                        "name": "userId",
+                                        "in": "path",
+                                        "required": true,
+                                        "type": "integer",
+                                        "description": "ID of the user to fetch"
+                                    },
+                                    ... other parameters
+                                ],
+                                "responses": {
+                                    "200": {
+                                        "description": "Successful response",
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "name": { "type": "string" },
+                                                "email": { "type": "string" },
+                                            }
                                         }
-                                    }
+                                    },
+                                    ... other responses
                                 }
-                            }
-                        }
-                        }
+                            },
+                            ... other methods
+                        },
+                        ... other paths
                     }
-                    }
-              ],
-              "communication": "Added POST /users endpoint to support user registration",
+                },
+                "communication": "Added POST /users endpoint to support user registration"
             }
 
             Don't update other parts of the document, only the API contracts.
