@@ -8,7 +8,7 @@ from django.db import transaction
 
 from agents.agent_factory import AgentFactory
 
-# from agents.agents.html_generator_agent import HtmlGeneratorAgent
+from agents.agents.java_lld_html_generator_agent import JavaLLDHTMLGeneratorAgent
 from agents.types import AgentType, LLMResponse
 
 from ..models.models import (
@@ -148,10 +148,15 @@ def _serialize_chat_messages(chat_messages, versioned_document=None):
     """
     if versioned_document is None:
         versioned_document = chat_messages[-1].current_document
-    output = json.dumps(versioned_document.document_elements, indent=4)
+    
+    document_elements = versioned_document.document_elements
+    output = json.dumps(document_elements, indent=4)
 
-    # html_generator = HtmlGeneratorAgent()
-    # html = html_generator.process(output)["response_message"]
+    java_lld_html_generator = JavaLLDHTMLGeneratorAgent()
+    html = {
+        "java LLD": java_lld_html_generator.process(json.dumps(document_elements["java LLD"]))["response_message"] if "java LLD" in document_elements else None
+    }
+
     response_data = {
         "chat_messages": [
             {
@@ -168,7 +173,7 @@ def _serialize_chat_messages(chat_messages, versioned_document=None):
             chat_messages[-1].conversation.id if len(chat_messages) > 0 else None
         ),
         "document": output,
-        # "html_document": html,
+        "html_document": json.dumps(html, indent=4),
     }
     return JsonResponse(response_data, safe=False)
 

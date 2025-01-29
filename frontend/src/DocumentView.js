@@ -1,21 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import {
-  JsonView,
-  allExpanded,
-  darkStyles,
-  // defaultStyles,
-} from "react-json-view-lite";
 import "react-chat-elements/dist/main.css";
 import { MessageBox } from "react-chat-elements";
 import logo from "./logo.png"; // Make sure the path is correct
 import Markdown from "react-markdown";
+import DocumentRenderer from "./components/DocumentRenderer";
 
-/**
- * A component that fetches and displays:
- * 1. The document (HTML) content.
- * 2. The list of chat messages.
- */
 function DocumentView() {
   const { documentId } = useParams();
   const [docData, setDocData] = useState(null);
@@ -167,14 +157,8 @@ function DocumentView() {
       <div style={styles.container}>
         {/* Document panel */}
         <div style={styles.docPanel}>
-          {/* If it's HTML, you can render with dangerouslySetInnerHTML */}
-          <div dangerouslySetInnerHTML={{ __html: html_document }} />
-
-          <JsonView
-            data={JSON.parse(document)}
-            shouldExpandNode={allExpanded}
-            style={darkStyles}
-          />
+          {/* Render appropriate component based on parsed document data */}
+          <DocumentRenderer document={document} html_document={html_document}/>
         </div>
 
         {/* Chat panel */}
@@ -361,6 +345,13 @@ const styles = {
     height: "100vh",
     color: "red",
     fontSize: "1.5rem",
+  },
+  docSection: {
+    marginBottom: "2rem",
+    padding: "1rem",
+    backgroundColor: "#fff",
+    borderRadius: "8px",
+    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
   },
 };
 
