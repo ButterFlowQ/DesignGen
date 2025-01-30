@@ -5,7 +5,7 @@ from agents.types import AgentType, LLMResponse
 from orchestrator.models.models import ChatMessage
 
 from .agent_interface import AgentInterface
-from ..agent_factory import AgentFactory
+from .java_lld_html_generator_agent import JavaLLDHTMLGeneratorAgent
 
 
 class JavaLLDAgent(AgentInterface):
@@ -184,9 +184,8 @@ class JavaLLDAgent(AgentInterface):
         llm_messages = self.generate_llm_history(chat_history, AgentType.JAVA_LLD)
         llm_response = self.llm.get_response(llm_messages, self.response_format)
 
-        java_lld_html_generator = AgentFactory.create_agent(
-            AgentType.JAVA_LLD_HTML_GENERATOR
-        )
+        java_lld_html_generator = JavaLLDHTMLGeneratorAgent()
+
         html = java_lld_html_generator.process(
             json.dumps(llm_response["updated_doc_element"])
         )["response_message"]

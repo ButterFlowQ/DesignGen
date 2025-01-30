@@ -149,7 +149,7 @@ def _serialize_chat_messages(chat_messages, versioned_document=None):
 
     document_elements = versioned_document.document_elements
     output = json.dumps(document_elements, indent=4)
-    html = json.dumps(versioned_document.html_document, indent=4)
+    html = versioned_document.html_document
 
     response_data = {
         "chat_messages": [
@@ -252,6 +252,7 @@ def _handle_llm_response(
         document=document,
         version=document.latest_version,
         document_elements=previous_version.document_elements or {},
+        html_document=previous_version.html_document or {},
         title=previous_version.title,
     )
 
