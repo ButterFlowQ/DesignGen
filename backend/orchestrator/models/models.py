@@ -92,6 +92,7 @@ class VersionedDocument(models.Model):
     version = models.IntegerField()
     document_elements = models.JSONField(null=True, blank=True)
     document = models.ForeignKey(Document, on_delete=models.CASCADE)
+    html_document = models.JSONField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.title} (Version {self.version})"

@@ -7,8 +7,6 @@ from django.shortcuts import get_object_or_404
 from django.db import transaction
 
 from agents.agent_factory import AgentFactory
-
-from agents.agents.java_lld_html_generator_agent import JavaLLDHTMLGeneratorAgent
 from agents.types import AgentType, LLMResponse
 
 from ..models.models import (
@@ -148,14 +146,10 @@ def _serialize_chat_messages(chat_messages, versioned_document=None):
     """
     if versioned_document is None:
         versioned_document = chat_messages[-1].current_document
-    
+
     document_elements = versioned_document.document_elements
     output = json.dumps(document_elements, indent=4)
-
-    java_lld_html_generator = JavaLLDHTMLGeneratorAgent()
-    html = {
-        "java LLD": java_lld_html_generator.process(json.dumps(document_elements["java LLD"]))["response_message"] if "java LLD" in document_elements else None
-    }
+    html = json.dumps(versioned_document.html_document, indent=4)
 
     response_data = {
         "chat_messages": [
@@ -269,6 +263,8 @@ def _handle_llm_response(
 
     # Update the relevant workflow element's content
     new_version.document_elements[document_element.name] = updated_content
+    if "html" in llm_response:
+        new_version.html_document[document_element.name] = llm_response["html"]
     new_version.save()
     document.save()
 
