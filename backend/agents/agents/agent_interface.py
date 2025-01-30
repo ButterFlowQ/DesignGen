@@ -29,7 +29,9 @@ class AgentInterface:
     ) -> LLMResponse:
         pass
 
-    def generate_llm_history(self, chat_history: List[ChatMessage], agent_type: AgentType = None) -> List[LLMMessage]:
+    def generate_llm_history(
+        self, chat_history: List[ChatMessage], agent_type: AgentType = None
+    ) -> List[LLMMessage]:
         """
         Converts the chat history into a list of messages suitable for the LLM.
 
@@ -62,31 +64,93 @@ class AgentInterface:
         match agent_type:
             # Requirements specific
             case AgentType.FUNCTIONAL_REQUIREMENT:
-                keys = ["functional requirements", "non functional requirements", "architecture", "api contracts", "database schema"]
+                keys = [
+                    "functional requirements",
+                    "non functional requirements",
+                    "architecture",
+                    "api contracts",
+                    "database schema",
+                ]
             case AgentType.NON_FUNCTIONAL_REQUIREMENT:
-                keys = ["functional requirements", "non functional requirements", "architecture", "api contracts", "database schema"]
+                keys = [
+                    "functional requirements",
+                    "non functional requirements",
+                    "architecture",
+                    "api contracts",
+                    "database schema",
+                ]
             # Architecture and Schema
             case AgentType.ARCHITECTURE:
-                keys = ["functional requirements", "non functional requirements", "architecture", "api contracts", "database schema"]
+                keys = [
+                    "functional requirements",
+                    "non functional requirements",
+                    "architecture",
+                    "api contracts",
+                    "database schema",
+                ]
             case AgentType.API_CONTRACT:
-                keys = ["functional requirements", "non functional requirements", "architecture", "api contracts", "database schema"]
+                keys = [
+                    "functional requirements",
+                    "non functional requirements",
+                    "architecture",
+                    "api contracts",
+                    "database schema",
+                ]
             case AgentType.DATABASE_SCHEMA:
-                keys = ["functional requirements", "non functional requirements", "architecture", "api contracts", "database schema"]
+                keys = [
+                    "functional requirements",
+                    "non functional requirements",
+                    "architecture",
+                    "api contracts",
+                    "database schema",
+                ]
             # LLD specific
             case AgentType.JAVA_LLD:
-                keys = ["functional requirements", "non functional requirements", "architecture", "api contracts", "database schema", "java LLD"]
+                keys = [
+                    "functional requirements",
+                    "non functional requirements",
+                    "architecture",
+                    "api contracts",
+                    "database schema",
+                    "java LLD",
+                ]
             case AgentType.REACT_LLD:
-                keys = ["functional requirements", "architecture", "api contracts", "react LLD"]
+                keys = [
+                    "functional requirements",
+                    "architecture",
+                    "api contracts",
+                    "react LLD",
+                ]
             # Code generators
             case AgentType.JAVA_CODE_GENERATOR:
-                keys = ["functional requirements", "non functional requirements", "architecture", "api contracts", "database schema", "java LLD"]
+                keys = [
+                    "functional requirements",
+                    "non functional requirements",
+                    "architecture",
+                    "api contracts",
+                    "database schema",
+                    "java LLD",
+                ]
             case AgentType.REACT_CODE_GENERATOR:
-                keys = ["functional requirements", "architecture", "api contracts", "react code", "react LLD"]
+                keys = [
+                    "functional requirements",
+                    "architecture",
+                    "api contracts",
+                    "react code",
+                    "react LLD",
+                ]
             # User or default case
             case _:
-                raise NotImplementedError(f"Agent type '{agent_type}' is not supported for message content generation")
-        
-        document_elements = {k: v for k, v in chat.current_document.document_elements.items() if k in keys}
+                raise NotImplementedError(
+                    f"Agent type '{agent_type}' is not supported for message content generation"
+                )
+
+        if chat.current_document.document_elements is not None:
+            document_elements = {
+                k: v
+                for k, v in chat.current_document.document_elements.items()
+                if k in keys
+            }
 
         if chat.is_user_message:
             message = {
