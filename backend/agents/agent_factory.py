@@ -8,6 +8,7 @@ from .agents.java_lld_agent import JavaLLDAgent
 from .agents.java_code_generation_agent import JavaCodeGenerationAgent
 from .agents.react_lld_agent import ReactLLDAgent
 from .agents.react_code_generation_agent import ReactCodeGenerationAgent
+from .agents.java_lld_html_generator_agent import JavaLLDHTMLGeneratorAgent
 from .types import AgentType
 
 
@@ -26,6 +27,7 @@ class AgentFactory:
         AgentType.JAVA_CODE_GENERATOR: JavaCodeGenerationAgent,
         AgentType.REACT_CODE_GENERATOR: ReactCodeGenerationAgent,
         AgentType.REACT_LLD: ReactLLDAgent,
+        AgentType.JAVA_LLD_HTML_GENERATOR: JavaLLDHTMLGeneratorAgent,
     }
 
     @staticmethod

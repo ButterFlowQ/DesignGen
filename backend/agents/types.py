@@ -19,6 +19,7 @@ class AgentType(str, Enum):
     REACT_CODE_GENERATOR = auto()
     REACT_LLD = auto()
     JAVA_FILE_CODE_GENERATOR = auto()
+    JAVA_LLD_HTML_GENERATOR = auto()
 
 
 class LLMMessage(TypedDict):
@@ -51,3 +52,4 @@ class LLMResponse(TypedDict):
     updated_doc_element: Any
     response_message: str
     raw_response: str
+    html: str
