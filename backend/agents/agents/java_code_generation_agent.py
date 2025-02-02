@@ -105,7 +105,15 @@ class JavaCodeGenerationAgent(AgentInterface):
             return f"{package.replace('.', '/')}/{class_name}.java"
 
         # Iterate over each section in the LLD
-        sections = ["controllers", "dtos", "services", "repositories", "entities"]
+        sections = [
+            "controllers",
+            "dtos",
+            "services",
+            "repositories",
+            "entities",
+            "enums",
+            "configurations",
+        ]
         for section in sections:
             section_data = java_lld.get(section, [])
             for item in section_data:
@@ -148,16 +156,3 @@ class JavaCodeGenerationAgent(AgentInterface):
             # Write the specified content to the file
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(file_info["content"])
-
-
-if __name__ == "__main__":
-    # Example usage of generate_code_base function
-    agent = JavaCodeGenerationAgent()
-    example_files = [
-        {"path": "com/example/MyClass.java", "content": "public class MyClass {}"},
-        {
-            "path": "com/example/MyOtherClass.java",
-            "content": "public class MyOtherClass {}",
-        },
-    ]
-    agent.generate_code_base(example_files)
