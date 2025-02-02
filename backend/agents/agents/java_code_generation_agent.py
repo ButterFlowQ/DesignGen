@@ -18,10 +18,10 @@ class JavaCodeGenerationAgent(AgentInterface):
 
     def __init__(self) -> None:
         self.folder_path = os.path.join(
-            os.path.dirname(__file__), "../../../../generated_code/java_backend"
+            os.path.dirname(__file__), "../../../generated_code/java_backend"
         )
         self.template_path = os.path.join(
-            os.path.dirname(__file__), "../../../../aritfacts/java_code_template"
+            os.path.dirname(__file__), "../../../artifacts/java_code_template"
         )
         self.max_threads = 3  # Set the maximum number of threads
 
