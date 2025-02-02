@@ -7,6 +7,7 @@ from agents.types import LLMResponse
 from orchestrator.models.models import ChatMessage
 from .java_file_code_generation_agent import JavaFileCodeGenerationAgent
 from .agent_interface import AgentInterface
+import shutil
 
 
 class JavaCodeGenerationAgent(AgentInterface):
@@ -17,9 +18,12 @@ class JavaCodeGenerationAgent(AgentInterface):
 
     def __init__(self) -> None:
         self.folder_path = os.path.join(
-            os.path.dirname(__file__), "../../../../generated_code"
+            os.path.dirname(__file__), "../../../../generated_code/java_backend"
         )
-        self.max_threads = 5  # Set the maximum number of threads
+        self.template_path = os.path.join(
+            os.path.dirname(__file__), "../../../../aritfacts/java_code_template"
+        )
+        self.max_threads = 3  # Set the maximum number of threads
 
     def process(self, chat_history: List[ChatMessage]) -> LLMResponse:
         """
@@ -126,11 +130,17 @@ class JavaCodeGenerationAgent(AgentInterface):
         """
         # Ensure the base folder exists
         os.makedirs(self.folder_path, exist_ok=True)
+        # Copy the entire template folder to the destination folder
+        if os.path.exists(self.folder_path):
+            shutil.rmtree(self.folder_path)
+        shutil.copytree(self.template_path, self.folder_path)
 
         # Create each file inside the folder
         for file_info in generated_files:
             # Join the base folder path with the relative path for the current file
-            file_path = os.path.join(self.folder_path, file_info["path"])
+            file_path = os.path.join(
+                self.folder_path + "/src/main/java/", file_info["path"]
+            )
 
             # Make sure the sub-directories for this file exist
             os.makedirs(os.path.dirname(file_path), exist_ok=True)
@@ -138,3 +148,16 @@ class JavaCodeGenerationAgent(AgentInterface):
             # Write the specified content to the file
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(file_info["content"])
+
+
+if __name__ == "__main__":
+    # Example usage of generate_code_base function
+    agent = JavaCodeGenerationAgent()
+    example_files = [
+        {"path": "com/example/MyClass.java", "content": "public class MyClass {}"},
+        {
+            "path": "com/example/MyOtherClass.java",
+            "content": "public class MyOtherClass {}",
+        },
+    ]
+    agent.generate_code_base(example_files)
