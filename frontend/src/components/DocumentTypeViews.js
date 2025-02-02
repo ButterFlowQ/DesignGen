@@ -11,7 +11,9 @@ export const FunctionalRequirements = ({ data, html }) => (
     <h2>Functional Requirements</h2>
     <ul>
       {data.map((req, index) => (
-        <li key={index}>{req}</li>
+        <li key={index}>
+          <JsonView data={req}></JsonView>
+        </li>
       ))}
     </ul>
   </div>
@@ -164,7 +166,9 @@ export const Architecture = ({ data, html }) => (
 );
 
 export const ApiContracts = ({ data, html }) => {
-  data.host = "http://localhost:8000";
+  data.host = "localhost:8090";
+  data.basePath = "";
+  data.schemes = ["http"];
   return (
     <div className="doc-section">
       <h2>API Contracts</h2>

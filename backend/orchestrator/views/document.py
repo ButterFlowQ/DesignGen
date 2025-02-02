@@ -177,7 +177,7 @@ def _validate_get_document_request_data(document_id: int, user):
     document = Document.objects.filter(id=document_id).first()
     if not document:
         logger.warning("Document not found for ID: %s", document_id)
-        return JsonResponse({"error": "Document not found"}, status=404)
+        return JsonResponse({"error": "Document not found"}, status=404), None
 
     # Check permissions
     # if not _user_can_access_document(user, document):
