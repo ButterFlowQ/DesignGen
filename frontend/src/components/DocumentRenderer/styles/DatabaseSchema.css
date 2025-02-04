@@ -1,0 +1,78 @@
+.schema-table {
+  margin-bottom: 1.5rem;
+  background-color: #f8fafc;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+}
+
+.schema-table h3 {
+  background-color: #2563eb;
+  color: #ffffff !important;
+  padding: 0.75rem 1rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.table-container {
+  overflow-x: auto;
+  padding: 0.75rem;
+}
+
+.schema-table table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  font-size: 0.875rem;
+}
+
+.schema-table th {
+  background-color: #2563eb;
+  color: white;
+  font-weight: 600;
+  text-align: left;
+  padding: 0.625rem 0.875rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.schema-table td {
+  padding: 0.625rem 0.875rem;
+  border-bottom: 1px solid #e2e8f0;
+  color: #334155;
+}
+
+.schema-table tr:hover {
+  background-color: #f8fafc;
+}
+
+.schema-table tr:last-child td {
+  border-bottom: none;
+}
+
+.foreign-key {
+  color: #2563eb;
+  font-weight: 500;
+}
+
+.foreign-key small {
+  color: #64748b;
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+}
+
+.index-entry {
+  background-color: #f8fafc;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  margin-bottom: 0.25rem;
+  font-size: 0.75rem;
+  color: #475569;
+}
+
+.index-entry:last-child {
+  margin-bottom: 0;
+}

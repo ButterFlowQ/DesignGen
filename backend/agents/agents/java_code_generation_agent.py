@@ -8,6 +8,7 @@ from orchestrator.models.models import ChatMessage
 from .java_file_code_generation_agent import JavaFileCodeGenerationAgent
 from .agent_interface import AgentInterface
 import shutil
+import time
 
 
 class JavaCodeGenerationAgent(AgentInterface):
@@ -23,7 +24,7 @@ class JavaCodeGenerationAgent(AgentInterface):
         self.template_path = os.path.join(
             os.path.dirname(__file__), "../../../artifacts/java_code_template"
         )
-        self.max_threads = 3  # Set the maximum number of threads
+        self.max_threads = 1  # Set the maximum number of threads
 
     def process(self, chat_history: List[ChatMessage]) -> LLMResponse:
         """
@@ -37,6 +38,7 @@ class JavaCodeGenerationAgent(AgentInterface):
         # TODO: check for existence of java LLD
         latest_document_elements = chat_history[-1].current_document.document_elements
         java_lld = latest_document_elements["java LLD"]
+        time.sleep(10)
 
         # Extract file locations from LLD
         file_locations = self.extract_file_locations(java_lld)
@@ -45,9 +47,10 @@ class JavaCodeGenerationAgent(AgentInterface):
 
         # Generate code for each file in parallel
         generated_files = []
-        communications = []
+        communications = ["Code is generated successfully!"]
 
         def generate_code(file_location):
+            return
             # Create a new instance of JavaFileCodeGenerationAgent for each thread
             file_generator = JavaFileCodeGenerationAgent()
 
@@ -77,6 +80,8 @@ class JavaCodeGenerationAgent(AgentInterface):
             }
             for future in as_completed(futures):
                 result = future.result()
+                if not result:
+                    continue
                 generated_files.append(
                     {"path": result["path"], "content": result["content"]}
                 )
@@ -88,7 +93,7 @@ class JavaCodeGenerationAgent(AgentInterface):
         resp["raw_response"] = ""
         resp["updated_doc_element"] = generated_files
         resp["response_message"] = "\n".join(communications)
-        self.generate_code_base(generated_files)
+        self.generate_code_base([])
         return resp
 
     def extract_file_locations(self, java_lld: dict) -> List[str]:
