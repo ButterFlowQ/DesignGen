@@ -5,11 +5,34 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="222859fc-a8d4-4e7b-bbb2-c1754b95a001" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../../backend/agents/agents/agent_interface.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../backend/agents/agents/agent_interface.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../backend/agents/agents/api_contract_agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../backend/agents/agents/api_contract_agent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/agents/agents/architect_agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../backend/agents/agents/architect_agent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/agents/agents/database_schema_agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../backend/agents/agents/database_schema_agent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/agents/agents/functional_requirement_agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../backend/agents/agents/functional_requirement_agent.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../backend/agents/agents/java_code_generation_agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../backend/agents/agents/java_code_generation_agent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/agents/agents/java_file_code_generation_agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../backend/agents/agents/java_file_code_generation_agent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/agents/agents/java_lld_agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../backend/agents/agents/java_lld_agent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/agents/agents/non_functional_requirement_agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../backend/agents/agents/non_functional_requirement_agent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/agents/agents/react_code_generation_agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../backend/agents/agents/react_code_generation_agent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/agents/agents/react_lld_agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../backend/agents/agents/react_lld_agent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/backend/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../backend/backend/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/backend/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../backend/backend/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../backend/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/../../backend/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/src/components/DocumentRenderer.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/components/DocumentRenderer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/src/components/DocumentTypeViews.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/components/DocumentTypeViews.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/orchestrator/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/orchestrator/admin.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/orchestrator/apps.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/orchestrator/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/orchestrator/migrations/0002_versioneddocument_html_document.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/orchestrator/migrations/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/orchestrator/models/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/orchestrator/models/models.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/orchestrator/urls.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/orchestrator/views/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/orchestrator/views/chat.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/orchestrator/views/document.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../backend/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../../backend/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
