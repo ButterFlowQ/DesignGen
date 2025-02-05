@@ -1,9 +1,9 @@
 from typing import List
 
 from agents.types import AgentType, LLMResponse
-from orchestrator.models.models import ChatMessage
+from orchestratorV2.models import ChatMessage
 from .agent_interface import AgentInterface
-from orchestrator.models.models import VersionedDocument
+from orchestratorV2.models import VersionedDocument
 
 
 class APIContractAgent(AgentInterface):

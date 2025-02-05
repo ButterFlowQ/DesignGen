@@ -37,9 +37,13 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "orchestrator",
+    # "orchestrator",
     "agents",
     "corsheaders",
+    "rest_framework",
+    "rest_framework.authtoken",
+    "orchestratorV2",
+    "drf_yasg",
 ]
 
 MIDDLEWARE = [

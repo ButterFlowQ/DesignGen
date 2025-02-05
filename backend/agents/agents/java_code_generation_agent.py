@@ -4,7 +4,7 @@ import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from agents.types import LLMResponse
-from orchestrator.models.models import ChatMessage
+from orchestratorV2.models import ChatMessage
 from .java_file_code_generation_agent import JavaFileCodeGenerationAgent
 from .agent_interface import AgentInterface
 import shutil

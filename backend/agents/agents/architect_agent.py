@@ -2,7 +2,7 @@ import textwrap
 from typing import List, Dict
 
 from agents.types import AgentType, LLMResponse
-from orchestrator.models.models import ChatMessage
+from orchestratorV2.models import ChatMessage
 
 from .agent_interface import AgentInterface
 

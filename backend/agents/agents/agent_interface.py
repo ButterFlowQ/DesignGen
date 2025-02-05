@@ -1,7 +1,7 @@
 from typing import List
 import json
 
-from orchestrator.models.models import ChatMessage
+from orchestratorV2.models import ChatMessage
 
 from ..types import AgentType, LLMResponse, LLMMessage
 from ..llm_wrapper import LLMWrapper

@@ -48,6 +48,7 @@ class Conversation(models.Model):
     """
 
     document = models.ForeignKey("Document", on_delete=models.CASCADE)
+    is_deleted = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Conversation"
@@ -62,6 +63,7 @@ class Document(models.Model):
     """
 
     latest_version = models.IntegerField(default=1)
+    is_deleted = models.BooleanField(default=False)
     current_conversation = models.ForeignKey(
         Conversation,
         on_delete=models.CASCADE,
@@ -93,6 +95,7 @@ class VersionedDocument(models.Model):
     document_elements = models.JSONField(null=True, blank=True)
     document = models.ForeignKey(Document, on_delete=models.CASCADE)
     html_document = models.JSONField(null=True, blank=True)
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.title} (Version {self.version})"
@@ -124,6 +127,7 @@ class ChatMessage(models.Model):
         Conversation, on_delete=models.CASCADE, null=True, blank=True
     )
     llm_raw_response = models.TextField(null=True, blank=True)
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return f"ChatMessage #{self.pk} from {self.from_id} ({self.to_id})"
