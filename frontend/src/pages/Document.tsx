@@ -1,34 +1,37 @@
 import React, { useEffect } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Chat } from '@/components/Chat';
 import { Navbar } from '@/components/Navbar/Navbar';
 import { DocumentRenderer } from '@/components/DocumentRenderer';
 import { useAppDispatch } from '@/hooks/useAppDispatch';
 import { useAppSelector } from '@/hooks/useAppSelector';
 import { 
-  fetchDocument, 
   sendChatMessage, 
   toggleChat, 
-  resetConversation,
-  undo, 
-  redo 
+  resetChat,
+  fetchChatMessages
 } from '@/store/chatSlice';
+import {
+  fetchDocument,
+  revertDocument
+} from '@/store/documentsSlice';
 import type { Agent } from '@/types';
 
 export function Document() {
   const { documentId } = useParams<{ documentId: string }>();
   const navigate = useNavigate();
-  const location = useLocation();
   const dispatch = useAppDispatch();
+  
   const { 
     messages, 
-    isLoading, 
-    isChatOpen, 
-    history,
-    document,
-    htmlDocument,
-    conversationId
+    isLoading: isChatLoading, 
+    isChatOpen
   } = useAppSelector(state => state.chat);
+
+  const {
+    currentDocument,
+    isLoading: isDocumentLoading
+  } = useAppSelector(state => state.documents);
 
   useEffect(() => {
     // Validate documentId and redirect if invalid
@@ -40,35 +43,46 @@ export function Document() {
     dispatch(fetchDocument(documentId));
   }, [documentId, dispatch, navigate]);
 
+  // Fetch chat messages when conversation ID is available
+  useEffect(() => {
+    if (documentId && currentDocument.conversationId) {
+      dispatch(fetchChatMessages({ 
+        documentId,
+        conversationId: currentDocument.conversationId,
+        page: 1
+      }));
+    }
+  }, [documentId, currentDocument.conversationId, dispatch]);
+
   const handleSendMessage = async (message: string, agent: Agent) => {
-    if (documentId && conversationId) {
+    if (documentId && currentDocument.conversationId) {
       dispatch(sendChatMessage({
         message,
         agent,
-        documentId,
-        conversationId
+        conversationId: currentDocument.conversationId,
+        documentId
       }));
     }
   };
 
   const handleNewChat = () => {
-    // Update URL to remove any chat-related parameters
-    navigate(location.pathname, { replace: true });
-    dispatch(resetConversation());
+    dispatch(resetChat());
   };
 
   const handleToggleChat = (value: boolean) => {
-    // Update URL to reflect chat state
-    const searchParams = new URLSearchParams(location.search);
-    if (value) {
-      searchParams.set('chat', 'open');
-    } else {
-      searchParams.delete('chat');
-    }
-    navigate(`${location.pathname}?${searchParams.toString()}`, { replace: true });
-    
     dispatch(toggleChat(value));
   };
+
+  const handleUndo = () => {
+    if (documentId && currentDocument.version) {
+      const targetVersion = currentDocument.version - 1;
+      if (targetVersion > 0) {
+        dispatch(revertDocument({ documentId, targetVersion }));
+      }
+    }
+  };
+
+  const isLoading = isDocumentLoading || isChatLoading;
 
   if (isLoading && !messages.length) {
     return (
@@ -84,16 +98,17 @@ export function Document() {
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar 
-        onUndo={() => dispatch(undo())} 
-        onRedo={() => dispatch(redo())}
-        canUndo={history.past.length > 0}
-        canRedo={history.future.length > 0}
+        onUndo={handleUndo}
+        canUndo={currentDocument.version ? currentDocument.version > 1 : false}
       />
       <div className={`pt-16 transition-all duration-300 ${isChatOpen ? 'sm:mr-[50%] lg:mr-[30%]' : 'mr-12'}`}>
         <div className="max-w-4xl mx-auto px-4 py-8">
+          {currentDocument.title && (
+            <h1 className="text-3xl font-bold text-gray-900 mb-6">{currentDocument.title}</h1>
+          )}
           <DocumentRenderer 
-            document={document} 
-            htmlDocument={htmlDocument} 
+            document={currentDocument.document} 
+            htmlDocument={currentDocument.htmlDocument} 
           />
         </div>
       </div>
@@ -102,7 +117,7 @@ export function Document() {
         messages={messages}
         onSendMessage={handleSendMessage}
         onNewChat={handleNewChat}
-        isLoading={isLoading}
+        isLoading={isChatLoading}
         isChatOpen={isChatOpen}
         onToggleChat={handleToggleChat}
       />

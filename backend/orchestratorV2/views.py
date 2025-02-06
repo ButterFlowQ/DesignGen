@@ -77,6 +77,7 @@ class DocumentListCreateView(APIView):
 
         # Paginate the resulting list
         paginator = PageNumberPagination()
+        paginator.page_size = 10  # Set an appropriate page size
         paginated_data = paginator.paginate_queryset(doc_list, request, view=self)
 
         # Optionally serialize them with a DRF serializer,
@@ -108,6 +109,7 @@ class DocumentListCreateView(APIView):
                     version=latest_version,
                     title=title,
                     document_elements={},
+                    html_document={},
                     is_deleted=False,
                 )
         except Exception as e:
@@ -141,12 +143,15 @@ class DocumentRetrieveView(APIView):
          "title": <str>,
          "version": <int>,
          "document_elements": {...},
+         "html_elements":{...},
          "creation_time": <datetime>,
+         "":
          ...
       }
     """
 
     permission_classes = [IsAuthenticated]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
 
     def get(self, request, doc_id=None, *args, **kwargs):
         if not doc_id:
@@ -172,7 +177,9 @@ class DocumentRetrieveView(APIView):
             "title": latest_active_vdoc.title,
             "version": latest_active_vdoc.version,
             "document_elements": latest_active_vdoc.document_elements,
+            "html_elements": latest_active_vdoc.html_document,
             "creation_time": latest_active_vdoc.creation_time,
+            "conversation_id": doc.current_conversation_id,
         }
         return Response(data, status=status.HTTP_200_OK)
 
@@ -198,6 +205,7 @@ class DocumentRevertView(APIView):
     """
 
     permission_classes = [IsAuthenticated]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
 
     @transaction.atomic
     def post(self, request, doc_id=None, *args, **kwargs):
@@ -293,6 +301,7 @@ class ChatMessageListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ChatMessageSerializer  # used for listing
     pagination_class = PageNumberPagination
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
 
     def get_queryset(self):
         """
@@ -300,13 +309,17 @@ class ChatMessageListCreateView(generics.ListCreateAPIView):
         Also exclude any 'is_deleted' messages if you use soft delete.
         """
         conversation_id = self.request.query_params.get("conversation_id")
+        document_id = self.request.query_params.get("document_id")
         qs = ChatMessage.objects.all()
 
         # Example: exclude soft-deleted messages if your model has is_deleted
         qs = qs.filter(is_deleted=False)
 
         if conversation_id:
-            qs = qs.filter(conversation_id=conversation_id)
+            qs = qs.filter(
+                document_id=document_id,
+                conversation_id=conversation_id,
+            )
         else:
             # Possibly return an empty queryset, or all messages, or raise an error
             qs = qs.none()

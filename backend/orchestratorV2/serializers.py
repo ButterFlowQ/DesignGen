@@ -64,5 +64,4 @@ class ChatMessageSerializer(serializers.ModelSerializer):
             "to_id",
             "is_user_message",
             "creation_time",
-            "llm_raw_response",
         ]

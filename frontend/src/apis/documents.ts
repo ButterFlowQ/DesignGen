@@ -1,54 +1,69 @@
 import { apiRequest } from './config';
-import { dummyData } from './dummyData';
 import type { Document } from '@/types';
 
+interface PaginatedResponse<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
+
+interface CreateDocumentResponse {
+  document_id: number;
+  versioned_document_id: number;
+}
+
+interface DocumentDetailsResponse {
+  id: number;
+  latest_version: number;
+  title: string;
+  version: number;
+  document_elements: any;
+  html_elements: any;
+  creation_time: string;
+  conversation_id: string;
+}
+
+interface DocumentResponse {
+  id: number;
+  title: string;
+  last_modified: string;
+}
+
 export async function fetchDocuments(): Promise<Document[]> {
-  // TODO: Replace with actual API call
-  await new Promise(resolve => setTimeout(resolve, 500));
-  
-  const mockDocuments: Document[] = [
-    { 
-      id: '1', 
-      title: 'Project Requirements', 
-      lastEdited: new Date().toISOString(),
-      createdBy: '1'
-    },
-    { 
-      id: '2', 
-      title: 'API Documentation', 
-      lastEdited: new Date(Date.now() - 86400000).toISOString(),
-      createdBy: '1'
-    },
-    { 
-      id: '3', 
-      title: 'System Architecture', 
-      lastEdited: new Date(Date.now() - 259200000).toISOString(),
-      createdBy: '1'
-    }
-  ];
-  return mockDocuments;
+  const response = await apiRequest<PaginatedResponse<DocumentResponse>>('/orchestrator/documents/');
+  return response.results.map((doc) => ({
+    id: doc.id.toString(),
+    title: doc.title,
+    lastEdited: doc.last_modified,
+  }));
 }
 
 export async function createDocument(title: string): Promise<Document> {
-  // TODO: Replace with actual API call
-  await new Promise(resolve => setTimeout(resolve, 500));
-  
+  const response = await apiRequest<CreateDocumentResponse>('/orchestrator/documents/', {
+    method: 'POST',
+    body: JSON.stringify({
+      document_schema_id: 1,
+      title
+    })
+  });
+
   return {
-    id: String(Date.now()),
+    id: response.document_id.toString(),
     title,
     lastEdited: new Date().toISOString(),
-    createdBy: '1'
   };
 }
 
-export async function fetchDocument(documentId: string) {
-  try {
-    return await apiRequest(
-      `/orchestrator/get_document/${documentId}`,
-      { mode: "cors" }
-    );
-  } catch (error) {
-    console.warn('API Error:', error);
-    return dummyData; // Return dummy data on error
-  }
+export async function fetchDocument(documentId: string): Promise<DocumentDetailsResponse> {
+  return await apiRequest(`/orchestrator/documents/${documentId}/`);
+}
+
+export async function revertDocument(documentId: string, targetVersion: number): Promise<void> {
+  await apiRequest(`/orchestrator/documents/${documentId}/revert/`, {
+    method: 'POST',
+    body: JSON.stringify({
+      target_version: targetVersion
+    })
+  });
 }

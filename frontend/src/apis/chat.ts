@@ -1,49 +1,47 @@
 import { apiRequest } from './config';
-import { dummyData } from './dummyData';
-import type { Agent } from '@/types';
+import type { ChatMessage, Agent } from '@/types';
+
+
+interface ChatMessageResponse {
+  user_message: {
+    message: string;
+    to_id: string;
+    is_user_message: boolean;
+    creation_time: string;
+  };
+  agent_message: {
+    message: string;
+    from_id: string;
+    is_user_message: boolean;
+    creation_time: string;
+  };
+}
+
+export async function fetchChatMessages(
+  documentId: string,
+  conversationId: string,
+  page: number = 1
+): Promise <ChatMessage[]> {
+  return await apiRequest(
+      `/orchestrator/chat/messages/?conversation_id=${conversationId}&page=${page}&document_id=${documentId}`);
+}
 
 export async function sendChatMessage(
   message: string,
   agent: Agent,
-  documentId: string,
-  conversationId: string
-) {
-  try {
-    return await apiRequest('/orchestrator/send_chat_message/', {
-      method: "POST",
-      body: JSON.stringify({
-        message,
-        from_id: "1", // User ID
-        to_id: agent.id,
-        document_id: documentId,
-        conversation_id: conversationId,
-      }),
-      mode: "cors",
-    });
-  } catch (error) {
-    console.warn('API Error:', error);
-    // Return dummy response on error
-    return {
-      chat_messages: [
-        {
-          id: Date.now(),
-          message,
-          from_id: null,
-          to_id: agent.id,
-          is_user_message: true,
-          creation_time: new Date().toISOString()
-        },
-        {
-          id: Date.now() + 1,
-          message: "I understand your message. However, I'm currently in offline mode due to API unavailability. I'll be fully functional once the connection is restored.",
-          from_id: agent.id,
-          to_id: null,
-          is_user_message: false,
-          creation_time: new Date().toISOString()
-        }
-      ],
-      conversation_id: conversationId,
-      document: dummyData.document
-    };
-  }
+  conversationId: string,
+  documentId: string
+): Promise<ChatMessageResponse> {
+  const userMessageData = {
+    message,
+    to_id: agent.id,
+    is_user_message: true,
+    conversation_id: conversationId,
+    document_id: documentId
+  };
+
+  return await apiRequest(`/orchestrator/chat/messages/?conversation_id=${conversationId}`, {
+    method: "POST",
+    body: JSON.stringify(userMessageData)
+  });
 }

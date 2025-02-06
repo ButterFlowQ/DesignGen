@@ -1,5 +1,4 @@
 import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
 import { MessageSquare, ChevronLeft, Plus, X } from 'lucide-react';
 import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
@@ -28,21 +27,26 @@ export function Chat({
   isChatOpen,
   onToggleChat
 }: ChatProps) {
-  const navigate = useNavigate();
-  const location = useLocation();
   const [currentMessage, setCurrentMessage] = React.useState('');
   const [selectedAgent, setSelectedAgent] = React.useState<Agent>(agents[0]);
+  const messagesEndRef = React.useRef<HTMLDivElement>(null);
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  // Scroll to bottom when new messages arrive
+  React.useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (currentMessage.trim() && !isLoading) {
-      // Update URL with agent ID
-      const searchParams = new URLSearchParams(location.search);
-      searchParams.set('agent', selectedAgent.id);
-      navigate(`${location.pathname}?${searchParams.toString()}`, { replace: true });
-      
-      onSendMessage?.(currentMessage, selectedAgent);
-      setCurrentMessage('');
+      try {
+        await onSendMessage(currentMessage, selectedAgent);
+        setCurrentMessage('');
+      } catch (error) {
+        console.error('Error sending message:', error);
+      }
     }
   };
 
@@ -54,11 +58,6 @@ export function Chat({
   };
 
   const handleNewConversation = () => {
-    // Update URL to reflect new conversation
-    const searchParams = new URLSearchParams(location.search);
-    searchParams.delete('agent');
-    navigate(`${location.pathname}?${searchParams.toString()}`, { replace: true });
-    
     onNewChat?.();
     setCurrentMessage('');
   };
@@ -66,11 +65,6 @@ export function Chat({
   const handleAgentChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newAgent = agents.find(agent => agent.id === e.target.value) || agents[0];
     setSelectedAgent(newAgent);
-    
-    // Update URL with new agent
-    const searchParams = new URLSearchParams(location.search);
-    searchParams.set('agent', newAgent.id);
-    navigate(`${location.pathname}?${searchParams.toString()}`, { replace: true });
   };
 
   return (
@@ -118,6 +112,7 @@ export function Chat({
                 message={message} 
               />
             ))}
+            <div ref={messagesEndRef} />
           </div>
 
           <ChatInput

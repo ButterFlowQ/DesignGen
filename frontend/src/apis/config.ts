@@ -13,11 +13,13 @@ export async function apiRequest<T>(
     headers: {
       ...headers,
       ...options.headers
-    }
+    },
+    mode: 'cors',
   });
 
   if (!response.ok) {
-    throw new Error(`API Error: ${response.statusText}`);
+    const error = await response.text();
+    throw new Error(error || response.statusText);
   }
 
   return response.json();

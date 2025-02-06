@@ -1,13 +1,11 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Undo2, Redo2 } from 'lucide-react';
+import { Search, Undo2 } from 'lucide-react';
 import { UserMenu } from './UserMenu';
 
 interface NavbarProps {
   onUndo: () => void;
-  onRedo: () => void;
   canUndo: boolean;
-  canRedo: boolean;
 }
 
 function ButterflowLogo() {
@@ -34,7 +32,7 @@ function ButterflowLogo() {
   );
 }
 
-export function Navbar({ onUndo, onRedo, canUndo, canRedo }: NavbarProps) {
+export function Navbar({ onUndo, canUndo }: NavbarProps) {
   const navigate = useNavigate();
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
@@ -61,8 +59,8 @@ export function Navbar({ onUndo, onRedo, canUndo, canRedo }: NavbarProps) {
             <span className="font-bold text-xl text-gray-800">Butterflow</span>
           </Link>
 
-          {/* Undo/Redo Controls */}
-          <div className="flex items-center space-x-2">
+          {/* Undo Control */}
+          <div className="flex items-center">
             <button
               onClick={onUndo}
               disabled={!canUndo}
@@ -74,18 +72,6 @@ export function Navbar({ onUndo, onRedo, canUndo, canRedo }: NavbarProps) {
               title="Undo"
             >
               <Undo2 className="h-5 w-5" />
-            </button>
-            <button
-              onClick={onRedo}
-              disabled={!canRedo}
-              className={`p-2 rounded-lg transition-all ${
-                canRedo
-                  ? 'text-orange-500 hover:bg-orange-50'
-                  : 'text-gray-300 cursor-not-allowed'
-              }`}
-              title="Redo"
-            >
-              <Redo2 className="h-5 w-5" />
             </button>
           </div>
 

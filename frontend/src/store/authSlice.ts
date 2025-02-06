@@ -1,5 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { setAuthToken, removeAuthToken } from '@/utils/auth';
+import { 
+  setAuthToken, 
+  setAuthUser, 
+  removeAuthData, 
+  getAuthToken, 
+  getAuthUser 
+} from '@/utils/auth';
 import * as authApi from '@/apis/auth';
 import type { User } from '@/types';
 
@@ -11,20 +17,33 @@ interface AuthState {
   token: string | null;
 }
 
+// Initialize state from stored auth data
+const storedToken = getAuthToken();
+const storedUser = getAuthUser();
+
 const initialState: AuthState = {
-  user: null,
-  isAuthenticated: false,
+  user: storedUser,
+  isAuthenticated: !!storedToken && !!storedUser,
   isLoading: false,
   error: null,
-  token: null
+  token: storedToken
 };
 
 export const signIn = createAsyncThunk(
   'auth/signIn',
   async ({ email, password }: { email: string; password: string }) => {
     const response = await authApi.signIn(email, password);
+    // Store auth token
     setAuthToken(response.token);
-    return response;
+    // Create a mock user for now since the API doesn't return user data
+    const mockUser: User = {
+      id: '1',
+      name: email.split('@')[0], // Use email username as name
+      email,
+      avatarUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(email.split('@')[0])}&background=random`
+    };
+    setAuthUser(mockUser);
+    return { token: response.token, user: mockUser };
   }
 );
 
@@ -32,15 +51,24 @@ export const signUp = createAsyncThunk(
   'auth/signUp',
   async ({ name, email, password }: { name: string; email: string; password: string }) => {
     const response = await authApi.signUp(name, email, password);
+    // Store auth token
     setAuthToken(response.token);
-    return response;
+    // Create a mock user for now since the API doesn't return user data
+    const mockUser: User = {
+      id: '1',
+      name,
+      email,
+      avatarUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`
+    };
+    setAuthUser(mockUser);
+    return { token: response.token, user: mockUser };
   }
 );
 
 export const signOut = createAsyncThunk(
   'auth/signOut',
   async () => {
-    removeAuthToken();
+    removeAuthData();
     return true;
   }
 );
