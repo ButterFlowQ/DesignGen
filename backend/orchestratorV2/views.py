@@ -428,6 +428,7 @@ class ChatMessageListCreateView(generics.ListCreateAPIView):
         a previously-existing version number.
         """
         # 1) Find the maximum version number used by this doc (including deleted)
+        current_version = document.latest_version
         max_version = (
             VersionedDocument.objects.filter(document=document).aggregate(
                 Max("version")
@@ -442,7 +443,7 @@ class ChatMessageListCreateView(generics.ListCreateAPIView):
 
         # 3) Get the 'previous' version doc
         prev_version_doc = VersionedDocument.objects.filter(
-            document=document, version=max_version
+            document=document, version=current_version
         ).first()
         if not prev_version_doc:
             # Fallback if no previous version found; handle accordingly

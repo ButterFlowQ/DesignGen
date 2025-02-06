@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import * as documentsApi from '@/apis/documents';
 import type { Document } from '@/types';
+import { fetchChatMessages } from './chatSlice';
 
 interface DocumentsState {
   documents: Document[];
@@ -54,9 +55,11 @@ export const createDocument = createAsyncThunk(
 
 export const revertDocument = createAsyncThunk(
   'documents/revert',
-  async ({ documentId, targetVersion }: { documentId: string; targetVersion: number }) => {
+  async ({ documentId, targetVersion }: { documentId: string; targetVersion: number }, {dispatch}) => {
     await documentsApi.revertDocument(documentId, targetVersion);
-    return await documentsApi.fetchDocument(documentId);
+    const newDocument = await documentsApi.fetchDocument(documentId);
+    dispatch(fetchChatMessages({documentId: documentId, conversationId: newDocument.conversation_id, page: 1}));
+    return newDocument;
   }
 );
 
