@@ -3,3 +3,7 @@ env
 frontend/node_modules/
 .DS_Store
 temp/
+generated_code/java_backend/target/
+.idea
+.bolt
+artifacts/java_code_template/target
