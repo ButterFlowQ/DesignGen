@@ -181,9 +181,9 @@ class APIContractAgent(AgentInterface):
         :return: An LLMResponse containing the updated API contracts, communication, and workflow status.
         """
         llm_messages = self.generate_llm_history(chat_history, AgentType.API_CONTRACT)
-        api_contract = VersionedDocument.objects.get(pk=85).document_elements[
-            "api contracts"
-        ]
+        # api_contract = VersionedDocument.objects.get(pk=85).document_elements[
+        #     "api contracts"
+        # ]
         llm_response = self.llm.get_response(llm_messages, self.response_format)
-        llm_response["updated_doc_element"] = api_contract
+        # llm_response["updated_doc_element"] = api_contract
         return llm_response

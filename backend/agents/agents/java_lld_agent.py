@@ -234,8 +234,8 @@ class JavaLLDAgent(AgentInterface):
 
         java_lld_html_generator = JavaLLDHTMLGeneratorAgent()
 
-        html = java_lld_html_generator.process(
+        uml = java_lld_html_generator.process(
             json.dumps(llm_response["updated_doc_element"])
         )["response_message"]
-        llm_response["html"] = html
+        llm_response["updated_doc_element"] = uml
         return llm_response

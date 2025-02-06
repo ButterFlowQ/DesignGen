@@ -43,20 +43,4 @@ class JavaLLDHTMLGeneratorAgent(SimpleAgentInterface):
     def process(self, message: str) -> LLMResponse:
         llm_messages = self.generate_llm_history(message)
         plantuml = self.llm.get_response(llm_messages, self.response_format)["plantuml"]
-        # Convert stringified plantuml to raw plantuml by removing quotes and escapes
-        # plantuml = plantuml.strip('"').replace('\\n', '\n')
-
-        # Generate SVG from PlantUML text
-        try:
-            svg_data = render(
-                plantuml,
-                engine="plantuml",
-                format="svg",
-            )[0]
-            # Convert bytes to string and wrap in img tag
-            svg_str = svg_data.decode("utf-8")
-            return {
-                "response_message": f"<div class='plantuml-diagram'>{svg_str}</div>"
-            }
-        except Exception as e:
-            return {"response_message": f"Error generating PlantUML diagram: {str(e)}"}
+        return {"response_message": plantuml}
