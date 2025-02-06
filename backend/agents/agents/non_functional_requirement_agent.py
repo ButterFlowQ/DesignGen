@@ -1,7 +1,7 @@
 from typing import List
 
 from agents.types import AgentType, LLMResponse
-from orchestrator.models.models import ChatMessage
+from orchestratorV2.models import ChatMessage
 
 from .agent_interface import AgentInterface
 
@@ -86,5 +86,7 @@ class NonFunctionalRequirementAgent(AgentInterface):
         :param chat_history: A list of ChatMessage objects to process.
         :return: An LLMResponse containing the updated NFRs, communication, and workflow status.
         """
-        llm_messages = self.generate_llm_history(chat_history, AgentType.NON_FUNCTIONAL_REQUIREMENT)
+        llm_messages = self.generate_llm_history(
+            chat_history, AgentType.NON_FUNCTIONAL_REQUIREMENT
+        )
         return self.llm.get_response(llm_messages, self.response_format)

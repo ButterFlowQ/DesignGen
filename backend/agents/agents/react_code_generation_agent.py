@@ -1,7 +1,7 @@
 from typing import List
 
 from agents.types import AgentType, LLMResponse
-from orchestrator.models.models import ChatMessage
+from orchestratorV2.models import ChatMessage
 
 from .agent_interface import AgentInterface
 
@@ -111,5 +111,7 @@ class ReactCodeGenerationAgent(AgentInterface):
         :return: An LLMResponse containing the generated code files, communication, dependencies,
                 and a boolean indicating whether to move to the next workflow.
         """
-        llm_messages = self.generate_llm_history(chat_history, agent_type=AgentType.REACT_CODE_GENERATOR)
+        llm_messages = self.generate_llm_history(
+            chat_history, agent_type=AgentType.REACT_CODE_GENERATOR
+        )
         return self.llm.get_response(llm_messages, self.response_format)

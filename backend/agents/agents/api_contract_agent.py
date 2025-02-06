@@ -1,8 +1,9 @@
 from typing import List
 
 from agents.types import AgentType, LLMResponse
-from orchestrator.models.models import ChatMessage
+from orchestratorV2.models import ChatMessage
 from .agent_interface import AgentInterface
+from orchestratorV2.models import VersionedDocument
 
 
 class APIContractAgent(AgentInterface):
@@ -180,4 +181,9 @@ class APIContractAgent(AgentInterface):
         :return: An LLMResponse containing the updated API contracts, communication, and workflow status.
         """
         llm_messages = self.generate_llm_history(chat_history, AgentType.API_CONTRACT)
-        return self.llm.get_response(llm_messages, self.response_format)
+        api_contract = VersionedDocument.objects.get(pk=85).document_elements[
+            "api contracts"
+        ]
+        llm_response = self.llm.get_response(llm_messages, self.response_format)
+        llm_response["updated_doc_element"] = api_contract
+        return llm_response

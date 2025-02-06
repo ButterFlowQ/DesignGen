@@ -1,0 +1,33 @@
+.swagger-container {
+  margin-top: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+/* Override Swagger UI styles for better integration */
+.swagger-ui .info {
+  margin: 1rem !important;
+}
+
+.swagger-ui .scheme-container {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 1rem !important;
+}
+
+.swagger-ui .opblock {
+  border-radius: 0.375rem !important;
+  margin: 0 1rem 1rem !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+.swagger-ui .opblock-tag {
+  font-size: 1.25rem !important;
+  margin: 1rem !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.swagger-ui .parameters-container {
+  padding: 1rem !important;
+}

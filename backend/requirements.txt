@@ -34,3 +34,4 @@ urllib3==2.2.3
 virtualenv==20.28.0
 django-cors-headers==4.6.0
 plantweb
+environs==14.1.0

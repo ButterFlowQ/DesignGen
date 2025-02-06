@@ -2,7 +2,7 @@ import json
 from typing import List
 
 from agents.types import AgentType, LLMResponse
-from orchestrator.models.models import ChatMessage
+from orchestratorV2.models import ChatMessage
 
 from .agent_interface import AgentInterface
 from .java_lld_html_generator_agent import JavaLLDHTMLGeneratorAgent
@@ -121,7 +121,6 @@ class JavaLLDAgent(AgentInterface):
                                     ]
                                 }
                                 {...},
-                                {...},
                             ]
                         },
                         {... other classes or interfaces},
@@ -143,6 +142,55 @@ class JavaLLDAgent(AgentInterface):
                             ],
                         },
                         {... other entities},
+                    ],
+                    "enums": [
+                    {
+                        "type": "enum class",
+                        "name": "EnumName",
+                        "description": "Description of the enum class",
+                        "package": "com.example.projectname.enums",
+                        "fields": [
+                            {
+                                "name": "fieldName",
+                                "type": "fieldType",
+                            },
+                            {... other fields},
+                        ],
+                    },
+                    {... other enums},
+                    ],
+                    "configurations": [
+                        {   
+                            "type": "class",
+                            "name": "ClassName",
+                            "description": "Description of the configuration class",
+                            "package": "com.example.projectname.configurations",
+                            "extends": [optional_parent_interface, ...],
+                            "methods": [
+                                {
+                                    "name": "methodName",
+                                    "return_type": "returnType",
+                                    "parameters": [
+                                        {
+                                            "name": "paramName",
+                                            "type": "paramType"
+                                        },
+                                        {...},
+                                    ],
+                                },
+                                {...},
+                            ],
+                            "fields": [
+                                {
+                                    "name": "fieldName",
+                                    "type": "fieldType",
+                                    "has_getter": true/false,
+                                    "has_setter": true/false,
+                                },
+                                {... other fields},
+                            ],
+                        },
+                        {... other configurations},
                     ],
                 },
                 "communication": "Explanation of the class design decisions and patterns used",
