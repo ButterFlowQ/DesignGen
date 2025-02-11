@@ -55,7 +55,7 @@ export function Document() {
   }, [documentId, currentDocument.conversationId, dispatch]);
 
   const handleSendMessage = async (message: string, agent: Agent) => {
-    if (documentId && currentDocument.conversationId) {
+    if (documentId) {
       dispatch(sendChatMessage({
         message,
         agent,
@@ -82,9 +82,8 @@ export function Document() {
     }
   };
 
-  const isLoading = isDocumentLoading || isChatLoading;
 
-  if (isLoading && !messages.length) {
+  if (isDocumentLoading && !messages.length) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">

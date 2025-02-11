@@ -42,6 +42,7 @@ public class AuthService {
         }
 
         User user = new User();
+        user.setId(UUID.randomUUID());
         user.setUsername(username);
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));

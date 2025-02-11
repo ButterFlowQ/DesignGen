@@ -51,7 +51,9 @@
   margin-bottom: 0.375rem;
 }
 
-.document-content pre {
+/* Make the pre selector more specific to avoid affecting Swagger UI */
+.document-content > pre,
+.document-content .markdown-content pre {
   background-color: #f3f4f6;
   padding: 0.875rem;
   border-radius: 0.375rem;
@@ -60,7 +62,11 @@
   font-size: 0.875rem;
 }
 
-.document-content code {
+/* Make code selector more specific to avoid affecting Swagger UI */
+.document-content > code,
+.document-content p > code,
+.document-content li > code,
+.document-content .markdown-content code {
   font-family: ui-monospace, monospace;
   font-size: 0.8125em;
   background-color: #f3f4f6;

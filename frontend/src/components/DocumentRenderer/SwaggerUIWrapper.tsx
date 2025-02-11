@@ -121,7 +121,6 @@ export const SwaggerUIWrapper = React.memo(function SwaggerUIWrapper({ spec, ...
           {...props}
           defaultModelsExpandDepth={-1}
           docExpansion="list"
-          supportedSubmitMethods={[]}
         />
       </div>
     </SwaggerErrorBoundary>

@@ -6,9 +6,9 @@ import type { ApiSpec } from '@/types';
 export const ApiContracts: React.FC<ViewProps> = ({ data }) => {
   const enhancedSpec: ApiSpec = {
     ...data,
-    host: data.host || "localhost:8090",
-    basePath: data.basePath || "",
-    schemes: data.schemes || ["http"]
+    host:"localhost:8090",
+    basePath: "",
+    schemes: ["http"]
   };
   
   return (

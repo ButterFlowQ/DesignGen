@@ -18,7 +18,7 @@ interface ChatState {
 interface SendMessagePayload {
   message: string;
   agent: Agent;
-  conversationId: string;
+  conversationId: string|null;
   documentId: string;
 }
 

@@ -29,7 +29,7 @@ export async function fetchChatMessages(
 export async function sendChatMessage(
   message: string,
   agent: Agent,
-  conversationId: string,
+  conversationId: string|null,
   documentId: string
 ): Promise<ChatMessageResponse> {
   const userMessageData = {
@@ -40,7 +40,7 @@ export async function sendChatMessage(
     document_id: documentId
   };
 
-  return await apiRequest(`/orchestrator/chat/messages/?conversation_id=${conversationId}`, {
+  return await apiRequest(`/orchestrator/chat/messages/`, {
     method: "POST",
     body: JSON.stringify(userMessageData)
   });
