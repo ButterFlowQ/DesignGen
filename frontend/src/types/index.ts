@@ -21,6 +21,13 @@ export interface ChatMessage {
   creation_time: string;
 }
 
+export interface Message {
+  text: string;
+  sender: 'user' | 'bot';
+  agent: string | null;
+  timestamp: string;
+}
+
 export interface Agent {
   id: string;
   name: string;
@@ -38,6 +45,14 @@ export interface ApiSpec {
   basePath?: string;
   schemes?: string[];
   paths: Record<string, any>;
+  components?: {
+    wrapComponents?: Record<string, any>;
+    schemas?: Record<string, any>;
+    securitySchemes?: Record<string, any>;
+    parameters?: Record<string, any>;
+    responses?: Record<string, any>;
+    [key: string]: any;
+  };
 }
 
 export interface DatabaseTable {

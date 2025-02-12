@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import * as chatApi from '@/apis/chat';
 import type { Message, Agent } from '@/types';
-import { useAppDispatch } from '@/hooks/useAppDispatch';
 import {
   fetchDocument,
 } from '@/store/documentsSlice';

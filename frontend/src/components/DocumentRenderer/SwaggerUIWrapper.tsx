@@ -17,11 +17,11 @@ class SwaggerErrorBoundary extends React.Component<SwaggerErrorBoundaryProps, Sw
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(error: Error): SwaggerErrorBoundaryState {
+  static getDerivedStateFromError(_: Error): SwaggerErrorBoundaryState {
     return { hasError: true };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
+  componentDidCatch(error: Error, _: React.ErrorInfo): void {
     console.debug('SwaggerUI encountered an error:', error);
   }
 

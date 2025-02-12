@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { Send, Loader2 } from 'lucide-react';
 import type { ChatInputProps } from './types';
 

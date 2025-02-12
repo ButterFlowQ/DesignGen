@@ -36,13 +36,13 @@ class JavaCodeGenerationAgent(AgentInterface):
                 and a boolean indicating whether to move to the next workflow.
         """
         # TODO: check for existence of java LLD
-        latest_document_elements = chat_history[-1].current_document.document_elements
-        java_lld = latest_document_elements["java LLD"]
+        # latest_document_elements = chat_history[-1].current_document.document_elements
+        # java_lld = latest_document_elements["java LLD"]
         time.sleep(10)
 
         # Extract file locations from LLD
-        file_locations = self.extract_file_locations(java_lld)
-        print(file_locations)
+        # file_locations = self.extract_file_locations(java_lld)
+        # print(file_locations)
         # file_locations = file_locations[:3]
 
         # Generate code for each file in parallel
@@ -73,26 +73,27 @@ class JavaCodeGenerationAgent(AgentInterface):
 
             return result
 
-        with ThreadPoolExecutor(max_workers=self.max_threads) as executor:
-            futures = {
-                executor.submit(generate_code, file_location): file_location
-                for file_location in file_locations
-            }
-            for future in as_completed(futures):
-                result = future.result()
-                if not result:
-                    continue
-                generated_files.append(
-                    {"path": result["path"], "content": result["content"]}
-                )
-                if result["response_message"]:
-                    communications.append(result["response_message"])
+        # with ThreadPoolExecutor(max_workers=self.max_threads) as executor:
+        #     futures = {
+        #         executor.submit(generate_code, file_location): file_location
+        #         for file_location in file_locations
+        #     }
+        #     for future in as_completed(futures):
+        #         result = future.result()
+        #         if not result:
+        #             continue
+        #         generated_files.append(
+        #             {"path": result["path"], "content": result["content"]}
+        #         )
+        #         if result["response_message"]:
+        #             communications.append(result["response_message"])
 
         # Return combined results
         resp = LLMResponse()
         resp["raw_response"] = ""
-        resp["updated_doc_element"] = generated_files
+        # resp["updated_doc_element"] = generated_files
         resp["response_message"] = "\n".join(communications)
+        return resp
         self.generate_code_base([])
         return resp
 
