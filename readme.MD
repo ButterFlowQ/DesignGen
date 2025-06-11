@@ -39,4 +39,4 @@ Start the development server with the following command:
 python manage.py runserver
 ```
 
-You're all set! Happy coding!
+You're all set!! Happy coding!
